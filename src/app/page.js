@@ -79,10 +79,36 @@ const Home = () => {
             //     maseWaypoints: JSON.parse(eventJson[0].maseWaypoints),
             // });
         };
-        setTimeout(() => {
-            fetchData();
-        }, 60000);
+        fetchData();
     }, []);
+
+    const fetchDataInterval = async () => {
+        const race = await fetch('https://map.race.id/api/race/1');
+        const raceJson = await race.json();
+
+        setRaceData(
+            raceJson.map((race) => {
+                return {
+                    value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`,
+                    label: `${race.raceName} - ${race.maseEventName}`,
+                };
+            })
+        );
+
+        // setEventData({
+        //     maseEndTime: eventJson[0].maseEndTime,
+        //     maseEventName: eventJson[0].maseEventName,
+        //     maseId: eventJson[0].maseId,
+        //     maseRaceId: eventJson[0].maseRaceId,
+        //     maseRoute: JSON.parse(eventJson[0].maseRoute),
+        //     maseStartTime: eventJson[0].maseStartTime,
+        //     maseWaypoints: JSON.parse(eventJson[0].maseWaypoints),
+        // });
+    };
+
+    setTimeout(() => {
+        fetchDataInterval();
+    }, 60000);
 
     React.useMemo(() => {
         const fetchData = async () => {
