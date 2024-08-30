@@ -6,7 +6,7 @@ import * as React from 'react';
 
 const MapLibreGLMap = ({
     eventData,
-    raceData,
+    // raceData,
     activePlayerData,
     activePlayerKey,
     activePlayerSingle,
