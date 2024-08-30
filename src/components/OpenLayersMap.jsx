@@ -49,7 +49,6 @@ const OpenLayersMap = ({
 
     React.useEffect(() => {
         if (eventData) {
-            console.log('eventData77', eventData);
             const currentPath =
                 eventData?.maseRoute?.features[0]?.geometry?.coordinates;
 
@@ -77,8 +76,6 @@ const OpenLayersMap = ({
                 geometry: new Point(route.getLastCoordinate()),
             });
             const position = endMarker.getGeometry().clone();
-            console.log('position', position);
-            console.log('route.getLastCoordinate()', route.getLastCoordinate());
             const geoMarker = new Feature({
                 geometry: position,
                 type: 'geoMarker',
@@ -98,11 +95,6 @@ const OpenLayersMap = ({
             //     dataProjection: 'EPSG:4326',
             //     featureProjection: 'EPSG:3857',
             // });
-
-            console.log(
-                'hehe',
-                transform([106.74825778, -6.18281389], 'EPSG:4326', 'EPSG:3857')
-            );
 
             const styles = {
                 route: new Style({

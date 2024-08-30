@@ -245,10 +245,6 @@ const Home = () => {
                                             <CommandGroup>
                                                 {activePlayerKey.map(
                                                     (event) => {
-                                                        console.log(
-                                                            '2731-index',
-                                                            event
-                                                        );
                                                         return (
                                                             <CommandItem
                                                                 className="cursor-pointer"

@@ -85,8 +85,12 @@
         /* position: absolute;
         bottom: 0; */
     }
+}
 
-    .maplibregl-popup-content {
-        padding: 0 !important;
-    }
+div.maplibregl-popup-content {
+    padding: 4px 8px;
+    font-weight: bold;
+}
+div.maplibregl-popup-content:hover {
+    cursor: pointer;
 }

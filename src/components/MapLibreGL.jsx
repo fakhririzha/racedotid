@@ -14,11 +14,11 @@ const MapLibreGLMap = ({
     mapLibre,
     setMapLibre,
 }) => {
-    console.log('2731-eventData', eventData);
-    console.log('2731-raceData', raceData);
-    console.log('2731-activePlayerData', activePlayerData);
-    console.log('2731-activePlayerKey', activePlayerKey);
-    console.log('2731-activePlayerSingle', activePlayerSingle);
+    // console.log('2731-eventData', eventData);
+    // console.log('2731-raceData', raceData);
+    // console.log('2731-activePlayerData', activePlayerData);
+    // console.log('2731-activePlayerKey', activePlayerKey);
+    // console.log('2731-activePlayerSingle', activePlayerSingle);
 
     React.useEffect(() => {
         const map = new maplibregl.Map({
@@ -52,7 +52,6 @@ const MapLibreGLMap = ({
                 if (mapLibre.getSource('LineString')) {
                     mapLibre.removeLayer('LineString');
                     mapLibre.removeSource('LineString');
-                    console.log('2731-haha');
                 }
                 mapLibre.addSource('LineString', {
                     type: 'geojson',
@@ -151,6 +150,14 @@ const MapLibreGLMap = ({
                 playerEl.id = `playerEl-${activePlayerData[item][0].BIBNo}`;
                 new maplibregl.Marker({ element: playerEl, scale: 0.5 })
                     .setLngLat(coordinates[0])
+                    .addTo(mapLibre);
+                new maplibregl.Popup({
+                    closeOnClick: false,
+                    className: 'popup-libregl',
+                    closeButton: false,
+                })
+                    .setLngLat(coordinates[0])
+                    .setHTML(`<h1>#${activePlayerData[item][0].BIBNo}</h1>`)
                     .addTo(mapLibre);
             });
         }
