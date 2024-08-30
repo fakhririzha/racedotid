@@ -316,10 +316,7 @@ const Home = () => {
                     <Button
                         variant="outline"
                         onClick={() => {
-                            setActivePlayerData(null);
-                            setActivePlayerKey(null);
-                            setActivePlayerSingle(null);
-                            setActiveRaceData(activeRaceData);
+                            window.location.reload();
                         }}
                         className="w-full"
                     >
