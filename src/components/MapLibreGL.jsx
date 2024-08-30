@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import * as dayjs from 'dayjs';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as React from 'react';
@@ -113,6 +114,49 @@ const MapLibreGLMap = ({
     }, [eventData, mapRef, mapLibre]);
 
     React.useEffect(() => {
+        if (activePlayerData && activePlayerKey) {
+            activePlayerKey.forEach((item) => {
+                console.log(activePlayerData[item]);
+
+                const coordinates = [
+                    [
+                        activePlayerData[item][0].Longitude,
+                        activePlayerData[item][0].Latitude,
+                    ],
+                ];
+
+                if (
+                    document.getElementById(
+                        `playerEl-${activePlayerData[item][0].BIBNo}`
+                    )
+                ) {
+                    document
+                        .getElementById(
+                            `playerEl-${activePlayerData[item][0].BIBNo}`
+                        )
+                        .remove();
+                }
+
+                let capturedTime = dayjs(
+                    activePlayerData[item][0].CapturedTime
+                );
+                let receivedTime = dayjs(
+                    activePlayerData[item][0].ReceivedTime
+                );
+
+                const timeDiff = receivedTime.diff(capturedTime, 'minutes');
+
+                const playerEl = document.createElement('img');
+                playerEl.src = timeDiff > 30 ? 'reddot.png' : 'greendot.png';
+                playerEl.id = `playerEl-${activePlayerData[item][0].BIBNo}`;
+                new maplibregl.Marker({ element: playerEl, scale: 0.5 })
+                    .setLngLat(coordinates[0])
+                    .addTo(mapLibre);
+            });
+        }
+    }, [activePlayerData, activePlayerKey, mapLibre]);
+
+    React.useEffect(() => {
         if (activePlayerSingle) {
             let idx = activePlayerSingle.split('_')[0];
             let participantObject = activePlayerData[idx];
@@ -131,14 +175,19 @@ const MapLibreGLMap = ({
                 padding: 20,
             });
 
+            let capturedTime = dayjs(participantObject[0].CapturedTime);
+            let receivedTime = dayjs(participantObject[0].ReceivedTime);
+
+            const timeDiff = receivedTime.diff(capturedTime, 'minutes');
+
             if (document.getElementById('playerEl')) {
                 document.getElementById('playerEl').remove();
             }
 
             const playerEl = document.createElement('img');
-            playerEl.src = 'redflag.png';
-            playerEl.id = 'startEl';
-            new maplibregl.Marker({ element: playerEl })
+            playerEl.src = timeDiff > 30 ? 'reddot.png' : 'greendot.png';
+            playerEl.id = 'playerEl';
+            new maplibregl.Marker({ element: playerEl, scale: 0.5 })
                 .setLngLat(coordinates[0])
                 .addTo(mapLibre);
         }

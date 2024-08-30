@@ -56,9 +56,7 @@ const Home = () => {
     React.useEffect(() => {
         const fetchData = async () => {
             const race = await fetch('https://map.race.id/api/race/1');
-            // const event = await fetch('https://map.race.id/api/event/1');
             const raceJson = await race.json();
-            // const eventJson = await event.json();
 
             setRaceData(
                 raceJson.map((race) => {
@@ -68,16 +66,6 @@ const Home = () => {
                     };
                 })
             );
-
-            // setEventData({
-            //     maseEndTime: eventJson[0].maseEndTime,
-            //     maseEventName: eventJson[0].maseEventName,
-            //     maseId: eventJson[0].maseId,
-            //     maseRaceId: eventJson[0].maseRaceId,
-            //     maseRoute: JSON.parse(eventJson[0].maseRoute),
-            //     maseStartTime: eventJson[0].maseStartTime,
-            //     maseWaypoints: JSON.parse(eventJson[0].maseWaypoints),
-            // });
         };
         fetchData();
     }, []);
@@ -94,16 +82,6 @@ const Home = () => {
                 };
             })
         );
-
-        // setEventData({
-        //     maseEndTime: eventJson[0].maseEndTime,
-        //     maseEventName: eventJson[0].maseEventName,
-        //     maseId: eventJson[0].maseId,
-        //     maseRaceId: eventJson[0].maseRaceId,
-        //     maseRoute: JSON.parse(eventJson[0].maseRoute),
-        //     maseStartTime: eventJson[0].maseStartTime,
-        //     maseWaypoints: JSON.parse(eventJson[0].maseWaypoints),
-        // });
     };
 
     setTimeout(() => {
