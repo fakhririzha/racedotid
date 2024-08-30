@@ -116,13 +116,10 @@ const MapLibreGLMap = ({
         if (activePlayerSingle) {
             let idx = activePlayerSingle.split('_')[0];
             let participantObject = activePlayerData[idx];
-            console.log('2731-activePlayerData', participantObject[0]);
 
             const coordinates = [
                 [participantObject[0].Longitude, participantObject[0].Latitude],
             ];
-            // console.log('2731-coordinates', participantObject);
-            // console.log('2731-coordinates', participantObject);
             const bounds = coordinates.reduce(
                 (bounds, coords) => {
                     return bounds.extend(coords);

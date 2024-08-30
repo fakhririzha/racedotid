@@ -79,7 +79,9 @@ const Home = () => {
             //     maseWaypoints: JSON.parse(eventJson[0].maseWaypoints),
             // });
         };
-        fetchData();
+        setTimeout(() => {
+            fetchData();
+        }, 60000);
     }, []);
 
     React.useMemo(() => {
