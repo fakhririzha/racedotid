@@ -115,7 +115,7 @@ const MapLibreGLMap = ({
     React.useEffect(() => {
         if (activePlayerData && activePlayerKey) {
             activePlayerKey.forEach((item) => {
-                console.log(activePlayerData[item]);
+                // console.log(activePlayerData[item]);
 
                 const coordinates = [
                     [
@@ -139,11 +139,19 @@ const MapLibreGLMap = ({
                 let capturedTime = dayjs(
                     activePlayerData[item][0].CapturedTime
                 );
-                let receivedTime = dayjs(
-                    activePlayerData[item][0].ReceivedTime
-                );
+                let nowTime = dayjs(Date.now());
+                // let receivedTime = dayjs(participantObject[0].ReceivedTime);
 
-                const timeDiff = receivedTime.diff(capturedTime, 'minutes');
+                // const timeDiff = nowTime.diff(capturedTime, 'minutes');
+
+                // let capturedTime = dayjs(
+                //     activePlayerData[item][0].CapturedTime
+                // );
+                // let receivedTime = dayjs(
+                //     activePlayerData[item][0].ReceivedTime
+                // );
+
+                const timeDiff = nowTime.diff(capturedTime, 'minutes');
 
                 const playerEl = document.createElement('img');
                 playerEl.src = timeDiff > 30 ? 'reddot.png' : 'greendot.png';
@@ -178,14 +186,17 @@ const MapLibreGLMap = ({
                 new maplibregl.LngLatBounds(coordinates[0], coordinates[0])
             );
 
+            console.log(participantObject[0]);
+
             mapLibre.fitBounds(bounds, {
                 padding: 20,
             });
 
             let capturedTime = dayjs(participantObject[0].CapturedTime);
-            let receivedTime = dayjs(participantObject[0].ReceivedTime);
+            let nowTime = dayjs(Date.now());
+            // let receivedTime = dayjs(participantObject[0].ReceivedTime);
 
-            const timeDiff = receivedTime.diff(capturedTime, 'minutes');
+            const timeDiff = nowTime.diff(capturedTime, 'minutes');
 
             if (document.getElementById('playerEl')) {
                 document.getElementById('playerEl').remove();

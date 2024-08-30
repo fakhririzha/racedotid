@@ -82,11 +82,15 @@ const Home = () => {
                 };
             })
         );
+        // setActiveEventData("1_Event");
     };
 
-    setTimeout(() => {
-        fetchDataInterval();
-    }, 60000);
+    if (activeEventData) {
+        setTimeout(() => {
+            fetchDataInterval();
+            console.log('Refresh Data...')
+        }, 60000);
+    }
 
     React.useMemo(() => {
         const fetchData = async () => {
