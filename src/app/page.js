@@ -22,17 +22,31 @@ import { Check, ChevronsUpDown } from 'lucide-react';
 import * as React from 'react';
 
 const Home = () => {
+    // FUTURE DEVELOPMENT
+
+    // const [state, setState] = React.useState({
+    //     raceData: null,
+    //     eventData: null,
+    //     activeRaceData: null,
+    //     activeEventData: null,
+    //     activePlayerData: null,
+    //     activePlayerKey: null,
+    //     openActivePlayerSingle: null,
+    //     activePlayerSingle: null,
+    //     mapLibre: null,
+    // });
+
+    // FUTURE DEVELOPMENT
+
     const [raceData, setRaceData] = React.useState(null);
     const [eventData, setEventData] = React.useState(null);
-    // const [participantData, setParticipantData] = React.useState(null);
 
     const [openRaceData, setOpenRaceData] = React.useState(false);
-    // const [openEventData, setOpenEventData] = React.useState(false);
-    const [activeRaceData, setActiveRaceData] = React.useState(null);
-    const [activeEventData, setActiveEventData] = React.useState(null);
     const [activePlayerData, setActivePlayerData] = React.useState(null);
     const [activePlayerKey, setActivePlayerKey] = React.useState(null);
 
+    const [activeRaceData, setActiveRaceData] = React.useState(null);
+    const [activeEventData, setActiveEventData] = React.useState(null);
     const [openActivePlayerSingle, setOpenActivePlayerSingle] =
         React.useState(null);
     const [activePlayerSingle, setActivePlayerSingle] = React.useState(null);
@@ -53,69 +67,50 @@ const Home = () => {
         return groupedData;
     };
 
-    React.useEffect(() => {
-        const fetchData = async () => {
-            const race = await fetch('https://map.race.id/api/race/1');
-            const raceJson = await race.json();
-
-            setRaceData(
-                raceJson.map((race) => {
-                    return {
-                        value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`,
-                        label: `${race.raceName} - ${race.maseEventName}`,
-                    };
-                })
-            );
-        };
-        fetchData();
-    }, []);
-
-    const fetchDataInterval = async () => {
+    const fetchData = async () => {
+        console.log('fetching data...');
         const race = await fetch('https://map.race.id/api/race/1');
         const raceJson = await race.json();
-
-        setRaceData(
-            raceJson.map((race) => {
-                return {
-                    value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`,
-                    label: `${race.raceName} - ${race.maseEventName}`,
-                };
-            })
-        );
-        // setActiveEventData("1_Event");
+        setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}` })));
     };
 
-    if (activeEventData) {
-        setTimeout(() => {
-            fetchDataInterval();
-            console.log('Refresh Data...')
-        }, 60000);
-    }
+    React.useEffect(() => {
+        fetchData();
+        const intervalId = setInterval(fetchData, 6000);
+        return () => clearInterval(intervalId);
+    }, []);
 
-    React.useMemo(() => {
-        const fetchData = async () => {
-            const event = await fetch(
-                `https://map.race.id/api/event/${activeRaceData.split('_')[0]})}`
-            );
+    // FUTURE DEVELOPMENT
+
+    // const handleRaceChange = (newRaceData) => {
+    //     setState((prevState) => ({ ...prevState, activeRaceData: newRaceData }));
+    // };
+
+    // const handleEventDataChange = (newEventData) => {
+    //     setState((prevState) => ({ ...prevState, activeEventData: newEventData }));
+    // };
+
+    // FUTURE DEVELOPMENT
+
+    const fetchEventData = async () => {
+        try {
+            const event = await fetch(`https://map.race.id/api/event/${activeRaceData.split('_')[0]}`);
             const eventJson = await event.json();
-
-            setEventData({
-                maseEndTime: eventJson[0].maseEndTime,
-                maseEventName: eventJson[0].maseEventName,
-                maseId: eventJson[0].maseId,
-                maseRaceId: eventJson[0].maseRaceId,
-                maseRoute: JSON.parse(eventJson[0].maseRoute),
-                maseStartTime: eventJson[0].maseStartTime,
-                maseWaypoints: JSON.parse(eventJson[0].maseWaypoints),
-            });
-        };
-        if (activeRaceData) {
-            fetchData();
+            setEventData(eventJson[0]);
+        } catch (error) {
+            console.error(error);
         }
+    };
+
+    React.useEffect(() => {
+        if (activeRaceData) {
+            fetchEventData();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeRaceData]);
 
     React.useMemo(() => {
-        const fetchData = async () => {
+        const fetchParticipantData = async () => {
             const participant = await fetch(
                 `https://map.race.id/api/participantByRace/${activeEventData.split('_')[0]})}`
             );
@@ -127,7 +122,7 @@ const Home = () => {
             );
         };
         if (activeEventData) {
-            fetchData();
+            fetchParticipantData();
         }
     }, [activeEventData]);
 
@@ -313,6 +308,7 @@ const Home = () => {
                 <MapLibreGLMap
                     eventData={eventData}
                     raceData={raceData}
+                    activeRaceData={activeRaceData}
                     activePlayerData={activePlayerData}
                     activePlayerKey={activePlayerKey}
                     activePlayerSingle={activePlayerSingle}

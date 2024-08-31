@@ -7,6 +7,7 @@ import * as React from 'react';
 const MapLibreGLMap = ({
     eventData,
     // raceData,
+    activeRaceData,
     activePlayerData,
     activePlayerKey,
     activePlayerSingle,
@@ -14,11 +15,31 @@ const MapLibreGLMap = ({
     mapLibre,
     setMapLibre,
 }) => {
-    // console.log('2731-eventData', eventData);
-    // console.log('2731-raceData', raceData);
-    // console.log('2731-activePlayerData', activePlayerData);
-    // console.log('2731-activePlayerKey', activePlayerKey);
-    // console.log('2731-activePlayerSingle', activePlayerSingle);
+    const createMarker = React.useCallback(
+        (coordinates, id, src) => {
+            const marker = document.createElement('img');
+            marker.src = src;
+            marker.id = id;
+            return new maplibregl.Marker({ element: marker, scale: 0.5 })
+                .setLngLat(coordinates)
+                .addTo(mapLibre);
+        },
+        [mapLibre]
+    );
+
+    const createPopup = React.useCallback(
+        (coordinates, html, id) => {
+            return new maplibregl.Popup({
+                closeOnClick: false,
+                className: id ? `${id} popup-libregl` : 'popup-libregl',
+                closeButton: false,
+            })
+                .setLngLat(coordinates)
+                .setHTML(html)
+                .addTo(mapLibre);
+        },
+        [mapLibre]
+    );
 
     React.useEffect(() => {
         const map = new maplibregl.Map({
@@ -28,34 +49,20 @@ const MapLibreGLMap = ({
             zoom: 15,
         });
         setMapLibre(map);
-    }, []);
+    }, [mapRef, setMapLibre]);
 
     React.useEffect(() => {
         if (mapRef && eventData && eventData.maseRoute) {
-            const mappedJson = {
-                type: 'FeatureCollection',
-                features: [
-                    {
-                        type: 'Feature',
-                        geometry: {
-                            type: 'LineString',
-                            properties: {},
-                            coordinates:
-                                eventData.maseRoute.features[0].geometry
-                                    .coordinates,
-                        },
-                    },
-                ],
-            };
-
             if (mapLibre._loaded) {
+                const parsedRoutes = JSON.parse(eventData.maseRoute);
+
                 if (mapLibre.getSource('LineString')) {
                     mapLibre.removeLayer('LineString');
                     mapLibre.removeSource('LineString');
                 }
                 mapLibre.addSource('LineString', {
                     type: 'geojson',
-                    data: mappedJson,
+                    data: parsedRoutes,
                 });
                 mapLibre.addLayer({
                     id: 'LineString',
@@ -71,145 +78,106 @@ const MapLibreGLMap = ({
                     },
                 });
 
-                const coordinates =
-                    eventData.maseRoute.features[0].geometry.coordinates;
-                const bounds = coordinates.reduce(
-                    (bounds, coords) => {
-                        return bounds.extend(coords);
-                    },
-                    new maplibregl.LngLatBounds(coordinates[0], coordinates[0])
+                const routeCoordinates =
+                    parsedRoutes.features[0].geometry.coordinates;
+                const bounds = routeCoordinates.reduce(
+                    (bounds, coords) => bounds.extend(coords),
+                    new maplibregl.LngLatBounds(
+                        routeCoordinates[0],
+                        routeCoordinates[0]
+                    )
                 );
 
-                mapLibre.fitBounds(bounds, {
-                    padding: 20,
-                });
+                mapLibre.fitBounds(bounds, { padding: 20 });
 
                 if (document.getElementById('startEl')) {
                     document.getElementById('startEl').remove();
                     document.getElementById('finishEl').remove();
                 }
 
-                const startEl = document.createElement('img');
-                startEl.src = 'redflag.png';
-                startEl.id = 'startEl';
-                const finishEl = document.createElement('img');
-                finishEl.src = 'redflag.png';
-                finishEl.id = 'finishEl';
-                new maplibregl.Marker({ element: startEl })
-                    .setLngLat(
-                        eventData.maseRoute.features[0].geometry.coordinates[0]
-                    )
-                    .addTo(mapLibre);
-                new maplibregl.Marker({ element: finishEl })
-                    .setLngLat(
-                        eventData.maseRoute.features[0].geometry.coordinates[
-                            eventData.maseRoute.features[0].geometry.coordinates
-                                .length - 1
-                        ]
-                    )
-                    .addTo(mapLibre);
+                createMarker(routeCoordinates[0], 'startEl', 'redflag.png');
+                createMarker(
+                    routeCoordinates[routeCoordinates.length - 1],
+                    'finishEl',
+                    'redflag.png'
+                );
             }
         }
-    }, [eventData, mapRef, mapLibre]);
+    }, [eventData, mapRef, mapLibre, createMarker]);
 
     React.useEffect(() => {
         if (activePlayerData && activePlayerKey) {
-            activePlayerKey.forEach((item) => {
-                // console.log(activePlayerData[item]);
+            const playerPoint = document.querySelectorAll("[id^='playerEl-']");
+            const playerPopup = document.querySelectorAll(
+                "[class*='playerPopup-']"
+            );
+            if (playerPoint.length > 0) {
+                playerPoint.forEach((el) => el.remove());
+                playerPopup.forEach((el) => el.remove());
+            }
 
+            activePlayerKey.forEach((playerId) => {
+                const playerData = activePlayerData[playerId];
                 const coordinates = [
-                    [
-                        activePlayerData[item][0].Longitude,
-                        activePlayerData[item][0].Latitude,
-                    ],
+                    playerData[0].Longitude,
+                    playerData[0].Latitude,
                 ];
 
-                if (
-                    document.getElementById(
-                        `playerEl-${activePlayerData[item][0].BIBNo}`
-                    )
-                ) {
-                    document
-                        .getElementById(
-                            `playerEl-${activePlayerData[item][0].BIBNo}`
-                        )
-                        .remove();
-                }
-
-                let capturedTime = dayjs(
-                    activePlayerData[item][0].CapturedTime
-                );
+                let capturedTime = dayjs(playerData[0].CapturedTime);
                 let nowTime = dayjs(Date.now());
-                // let receivedTime = dayjs(participantObject[0].ReceivedTime);
-
-                // const timeDiff = nowTime.diff(capturedTime, 'minutes');
-
-                // let capturedTime = dayjs(
-                //     activePlayerData[item][0].CapturedTime
-                // );
-                // let receivedTime = dayjs(
-                //     activePlayerData[item][0].ReceivedTime
-                // );
-
                 const timeDiff = nowTime.diff(capturedTime, 'minutes');
 
-                const playerEl = document.createElement('img');
-                playerEl.src = timeDiff > 30 ? 'reddot.png' : 'greendot.png';
-                playerEl.id = `playerEl-${activePlayerData[item][0].BIBNo}`;
-                new maplibregl.Marker({ element: playerEl, scale: 0.5 })
-                    .setLngLat(coordinates[0])
-                    .addTo(mapLibre);
-                new maplibregl.Popup({
-                    closeOnClick: false,
-                    className: 'popup-libregl',
-                    closeButton: false,
-                })
-                    .setLngLat(coordinates[0])
-                    .setHTML(`<h1>#${activePlayerData[item][0].BIBNo}</h1>`)
-                    .addTo(mapLibre);
+                createMarker(
+                    coordinates,
+                    `playerEl-${playerData[0].BIBNo}`,
+                    timeDiff > 30 ? 'reddot.png' : 'greendot.png'
+                );
+                createPopup(
+                    coordinates,
+                    `<h1>#${playerData[0].BIBNo}</h1>`,
+                    `playerPopup-${playerData[0].BIBNo}`
+                );
             });
         }
-    }, [activePlayerData, activePlayerKey, mapLibre]);
+    }, [
+        activeRaceData,
+        activePlayerData,
+        activePlayerKey,
+        createMarker,
+        createPopup,
+        mapLibre,
+    ]);
 
     React.useEffect(() => {
         if (activePlayerSingle) {
-            let idx = activePlayerSingle.split('_')[0];
-            let participantObject = activePlayerData[idx];
-
+            const idx = activePlayerSingle.split('_')[0];
+            const participantObject = activePlayerData[idx];
             const coordinates = [
-                [participantObject[0].Longitude, participantObject[0].Latitude],
+                participantObject[0].Longitude,
+                participantObject[0].Latitude,
             ];
-            const bounds = coordinates.reduce(
-                (bounds, coords) => {
-                    return bounds.extend(coords);
-                },
-                new maplibregl.LngLatBounds(coordinates[0], coordinates[0])
+
+            mapLibre.fitBounds(
+                new maplibregl.LngLatBounds(coordinates, coordinates),
+                { padding: 20 }
             );
 
-            console.log(participantObject[0]);
-
-            mapLibre.fitBounds(bounds, {
-                padding: 20,
-            });
-
-            let capturedTime = dayjs(participantObject[0].CapturedTime);
-            let nowTime = dayjs(Date.now());
-            // let receivedTime = dayjs(participantObject[0].ReceivedTime);
-
-            const timeDiff = nowTime.diff(capturedTime, 'minutes');
+            const timeDiff = dayjs().diff(
+                dayjs(participantObject[0].CapturedTime),
+                'minutes'
+            );
 
             if (document.getElementById('playerEl')) {
                 document.getElementById('playerEl').remove();
             }
 
-            const playerEl = document.createElement('img');
-            playerEl.src = timeDiff > 30 ? 'reddot.png' : 'greendot.png';
-            playerEl.id = 'playerEl';
-            new maplibregl.Marker({ element: playerEl, scale: 0.5 })
-                .setLngLat(coordinates[0])
-                .addTo(mapLibre);
+            createMarker(
+                coordinates,
+                'playerEl',
+                timeDiff > 30 ? 'reddot.png' : 'greendot.png'
+            );
         }
-    }, [activePlayerData, activePlayerSingle, mapLibre]);
+    }, [activePlayerData, activePlayerSingle, createMarker, mapLibre]);
 
     return (
         <>
