@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev",
+        "dev": "next dev -p 5000",
         "build": "next build",
         "start": "next start -p 5000",
         "lint": "next lint"
@@ -15,6 +15,8 @@
         "@radix-ui/react-separator": "^1.1.0",
         "@radix-ui/react-slot": "^1.1.0",
         "@turf/helpers": "^7.1.0",
+        "@turf/point-to-line-distance": "^7.1.0",
+        "@turf/turf": "^7.1.0",
         "class-variance-authority": "^0.7.0",
         "clsx": "^2.1.1",
         "cmdk": "^1.0.0",

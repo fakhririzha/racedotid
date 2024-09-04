@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import * as turf from '@turf/turf';
 import * as dayjs from 'dayjs';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -42,9 +43,29 @@ const MapLibreGLMap = ({
     );
 
     React.useEffect(() => {
+        const OSMStyles = {
+            version: 8,
+            sources: {
+                osm: {
+                    type: 'raster',
+                    tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                    tileSize: 256,
+                    attribution: '&copy; OpenStreetMap Contributors',
+                    maxzoom: 19,
+                },
+            },
+            layers: [
+                {
+                    id: 'osm',
+                    type: 'raster',
+                    source: 'osm', // This must match the source key above
+                },
+            ],
+        };
         const map = new maplibregl.Map({
             container: mapRef.current, // container id
-            style: 'https://api.maptiler.com/maps/streets-v2/style.json?key=duLQBPKlGnKBOjUnRfnO', // style URL
+            // style: 'https://api.maptiler.com/maps/streets-v2/style.json?key=duLQBPKlGnKBOjUnRfnO', // style URL
+            style: OSMStyles, // style URL
             center: [107.6196, -6.87063],
             zoom: 15,
         });
@@ -107,6 +128,8 @@ const MapLibreGLMap = ({
 
     React.useEffect(() => {
         if (activePlayerData && activePlayerKey) {
+            const parsedRoutes = JSON.parse(eventData.maseRoute);
+
             const playerPoint = document.querySelectorAll("[id^='playerEl-']");
             const playerPopup = document.querySelectorAll(
                 "[class*='playerPopup-']"
@@ -117,26 +140,36 @@ const MapLibreGLMap = ({
             }
 
             activePlayerKey.forEach((playerId) => {
-                const playerData = activePlayerData[playerId];
-                const coordinates = [
-                    playerData[0].Longitude,
-                    playerData[0].Latitude,
-                ];
+                const playerData = activePlayerData[playerId][0];
+                const coordinates = [playerData.Longitude, playerData.Latitude];
 
-                let capturedTime = dayjs(playerData[0].CapturedTime);
-                let nowTime = dayjs(Date.now());
-                const timeDiff = nowTime.diff(capturedTime, 'minutes');
+                if (coordinates[0] === null || coordinates[1] === null) {
+                    createMarker(
+                        parsedRoutes.features[0].geometry.coordinates[0],
+                        `playerEl-${playerData.BIBNo}`,
+                        'greydot.png'
+                    );
+                    createPopup(
+                        parsedRoutes.features[0].geometry.coordinates[0],
+                        `<h1>#${playerData.BIBNo}</h1>`,
+                        `playerPopup-${playerData.BIBNo}`
+                    );
+                } else {
+                    let capturedTime = dayjs(playerData.CapturedTime);
+                    let nowTime = dayjs(Date.now());
+                    const timeDiff = nowTime.diff(capturedTime, 'minutes');
 
-                createMarker(
-                    coordinates,
-                    `playerEl-${playerData[0].BIBNo}`,
-                    timeDiff > 30 ? 'reddot.png' : 'greendot.png'
-                );
-                createPopup(
-                    coordinates,
-                    `<h1>#${playerData[0].BIBNo}</h1>`,
-                    `playerPopup-${playerData[0].BIBNo}`
-                );
+                    createMarker(
+                        coordinates,
+                        `playerEl-${playerData.BIBNo}`,
+                        timeDiff > 30 ? 'reddot.png' : 'greendot.png'
+                    );
+                    createPopup(
+                        coordinates,
+                        `<h1>#${playerData.BIBNo}</h1>`,
+                        `playerPopup-${playerData.BIBNo}`
+                    );
+                }
             });
         }
     }, [
@@ -146,16 +179,27 @@ const MapLibreGLMap = ({
         createMarker,
         createPopup,
         mapLibre,
+        eventData,
     ]);
 
     React.useEffect(() => {
         if (activePlayerSingle) {
+            const parsedRoutes = JSON.parse(eventData.maseRoute);
+            const lineCoordinates = parsedRoutes;
+            const lineJustCoordinates =
+                lineCoordinates.features[0].geometry.coordinates;
+            const pointRoutes = lineJustCoordinates.map((point) =>
+                turf.point(point)
+            );
+            const featureCollectionRoutes = turf.featureCollection(pointRoutes);
+
             const idx = activePlayerSingle.split('_')[0];
-            const participantObject = activePlayerData[idx];
-            const coordinates = [
-                participantObject[0].Longitude,
-                participantObject[0].Latitude,
-            ];
+            const participantObject = activePlayerData[idx][0];
+            const coordinates =
+                participantObject.Longitude === null ||
+                participantObject.Latitude === null
+                    ? parsedRoutes.features[0].geometry.coordinates[0]
+                    : [participantObject.Longitude, participantObject.Latitude];
 
             mapLibre.fitBounds(
                 new maplibregl.LngLatBounds(coordinates, coordinates),
@@ -163,7 +207,7 @@ const MapLibreGLMap = ({
             );
 
             const timeDiff = dayjs().diff(
-                dayjs(participantObject[0].CapturedTime),
+                dayjs(participantObject.CapturedTime),
                 'minutes'
             );
 
@@ -171,13 +215,63 @@ const MapLibreGLMap = ({
                 document.getElementById('playerEl').remove();
             }
 
+            let nearest = turf.nearestPoint(
+                turf.point(coordinates),
+                featureCollectionRoutes
+            );
+            // console.log('pointRoutes', pointRoutes);
+            // console.log('featureCollectionRoutes', featureCollectionRoutes);
+            // console.log('nearest', nearest);
+
+            const nearestPointFromParticipant = lineJustCoordinates.findIndex(
+                (innerArr) => {
+                    return innerArr.every(
+                        (element, index) =>
+                            element === nearest.geometry.coordinates[index]
+                    );
+                }
+            );
+
+            let distanceTotal = 0;
+
+            for (let i = 0; i <= nearestPointFromParticipant; i++) {
+                const current = lineJustCoordinates[i];
+                const next = lineJustCoordinates[i + 1];
+                if (current && next) {
+                    distanceTotal += turf.distance(current, next);
+                }
+            }
+
+            // console.log('distanceTotal', distanceTotal);
+            // console.log('participantObject', participantObject);
+
             createMarker(
                 coordinates,
                 'playerEl',
-                timeDiff > 30 ? 'reddot.png' : 'greendot.png'
+                participantObject.Longitude === null
+                    ? 'greydot.png'
+                    : timeDiff > 30
+                      ? 'reddot.png'
+                      : 'greendot.png'
+            );
+            createPopup(
+                coordinates,
+                `<div>
+                    <h1>#${participantObject.BIBNo}</h1>
+                    <h2>Distance Travelled: ${participantObject.Longitude === null ? 0 : distanceTotal.toLocaleString('id-ID', { style: 'decimal', maximumFractionDigits: 3 })}km</h2>
+                </div>
+                `,
+                `playerPopup-${participantObject.BIBNo}`
             );
         }
-    }, [activePlayerData, activePlayerSingle, createMarker, mapLibre]);
+    }, [
+        activePlayerData,
+        activePlayerSingle,
+        createMarker,
+        createPopup,
+        eventData,
+        mapLibre,
+    ]);
 
     return (
         <>
