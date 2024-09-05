@@ -131,7 +131,7 @@ const Status = () => {
 
     return (
         <main className="status flex">
-            <section className="sidebar basis-2/12 bg-primary p-4">
+            <section className="sidebar basis-2/12 bg-primary p-4 max-sm:hidden">
                 <div className="title-wrapper my-2 text-center">
                     <span className="text-xl font-bold text-white">
                         Status Table.
@@ -139,7 +139,7 @@ const Status = () => {
                 </div>
                 <Separator />
             </section>
-            <section className="map basis-10/12 h-[100vh] p-4">
+            <section className="map basis-10/12 h-[100vh] p-4 max-sm:basis-full max-sm:max-w-[100vw]">
                 <div className="flex items-center pb-4">
                     <Input
                         placeholder="Filter TamaID..."
