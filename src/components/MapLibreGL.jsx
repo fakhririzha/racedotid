@@ -198,7 +198,7 @@ const MapLibreGLMap = ({
                 createMarker(
                     routeCoordinates[routeCoordinates.length - 1],
                     'finishEl',
-                    'redflag.png'
+                    'finflag.png'
                 );
             }
         }

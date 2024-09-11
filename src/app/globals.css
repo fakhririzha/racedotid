@@ -68,6 +68,7 @@
     }
 
     #map, .map {
+        height: 100%;
         /* position: absolute;
         top: 0;
         bottom: 50px;

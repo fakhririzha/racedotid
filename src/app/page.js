@@ -128,11 +128,11 @@ const Home = () => {
     }, [activeEventData]);
 
     return (
-        <main className="flex">
-            <div className="sidebar basis-2/12 bg-primary p-4">
+        <main className="max-sm:flex-col flex max-sm:h-[100vh]">
+            <div className="sidebar basis-2/12 bg-primary p-4 max-sm:order-2">
                 <div className="title-wrapper my-2 text-center">
                     <span className="text-xl font-bold text-white">
-                        Live Tracker.
+                        PON Trail Run Tracker
                     </span>
                 </div>
                 <Separator />
@@ -154,16 +154,16 @@ const Home = () => {
                                               (race) =>
                                                   race.value === activeRaceData
                                           )?.label
-                                        : 'Select a race...'}
+                                        : 'Pilih perlombaan...'}
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-full p-0">
                                 <Command>
-                                    <CommandInput placeholder="Select a race..." />
+                                    <CommandInput placeholder="Pilih perlombaan..." />
                                     <CommandList>
                                         <CommandEmpty>
-                                            No race found.
+                                            Tidak ada perlombaan.
                                         </CommandEmpty>
                                         <CommandGroup>
                                             {raceData.map((race) => (
@@ -224,23 +224,23 @@ const Home = () => {
                                     >
                                         {activePlayerSingle
                                             ? activePlayerSingle
-                                            : 'Select a participant...'}
+                                            : 'Pilih peserta...'}
                                         {/* {activePlayerSingle
                                             ? activePlayerKey.find(
                                                   (event) =>
                                                       `${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}` ===
                                                       activePlayerSingle
                                               )?.label
-                                            : 'Select a participant...'} */}
+                                            : 'Pilih peserta...'} */}
                                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-full p-0">
                                     <Command>
-                                        <CommandInput placeholder="Select a participant..." />
+                                        <CommandInput placeholder="Pilih peserta..." />
                                         <CommandList>
                                             <CommandEmpty>
-                                                No participant found.
+                                                Tidak ada peserta.
                                             </CommandEmpty>
                                             <CommandGroup>
                                                 {activePlayerKey.map(
@@ -298,7 +298,7 @@ const Home = () => {
                     </Button>
                 </div>
             </div>
-            <div className="map-wrapper h-[100vh] basis-10/12">
+            <div className="map-wrapper h-[100vh] max-sm:basis-full basis-10/12 max-sm:order-1 w-[100vw]">
                 {/* <OpenLayersMap
                     eventData={eventData}
                     raceData={raceData}
