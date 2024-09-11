@@ -42,6 +42,8 @@ const MapLibreGLMap = ({
         [mapLibre]
     );
 
+    // const [counter, setCounter] = React.useState(0);
+
     React.useEffect(() => {
         const OSMStyles = {
             version: 8,
@@ -66,8 +68,8 @@ const MapLibreGLMap = ({
             container: mapRef.current, // container id
             // style: 'https://api.maptiler.com/maps/streets-v2/style.json?key=duLQBPKlGnKBOjUnRfnO', // style URL
             style: OSMStyles, // style URL
-            center: [107.6196, -6.87063],
-            zoom: 15,
+            center: [98.50727, 2.88624],
+            zoom: 5,
         });
         setMapLibre(map);
     }, [mapRef, setMapLibre]);
@@ -76,6 +78,7 @@ const MapLibreGLMap = ({
         if (mapRef && eventData && eventData.maseRoute) {
             if (mapLibre._loaded) {
                 const parsedRoutes = JSON.parse(eventData.maseRoute);
+                // console.log(parsedRoutes);
 
                 if (mapLibre.getSource('LineString')) {
                     mapLibre.removeLayer('LineString');
@@ -98,6 +101,81 @@ const MapLibreGLMap = ({
                         'line-width': 4,
                     },
                 });
+
+                // const orig = parsedRoutes.features[0].geometry.coordinates[0];
+                // const dest =
+                //     parsedRoutes.features[0].geometry.coordinates[
+                //         parsedRoutes.features[0].geometry.coordinates.length - 1
+                //     ];
+
+                // const pointStart = {
+                //     type: 'FeatureCollection',
+                //     features: [
+                //         {
+                //             type: 'Feature',
+                //             properties: {},
+                //             geometry: {
+                //                 type: 'Point',
+                //                 coordinates: orig,
+                //             },
+                //         },
+                //     ],
+                // };
+
+                // mapLibre.addSource('point', {
+                //     type: 'geojson',
+                //     data: pointStart,
+                // });
+
+                // mapLibre.addLayer({
+                //     id: 'point',
+                //     source: 'point',
+                //     type: 'symbol',
+                //     layout: {
+                //         'icon-image': 'airport_15',
+                //         'icon-rotate': ['get', 'bearing'],
+                //         'icon-rotation-alignment': 'map',
+                //         'icon-overlap': 'always',
+                //         'icon-ignore-placement': true,
+                //     },
+                // });
+
+                // const steps = 10000;
+
+                // console.log(pointStart);
+
+                // const animate = () => {
+                //     pointStart.features[0].geometry.coordinates =
+                //         parsedRoutes.features[0].geometry.coordinates[counter];
+
+                //     pointStart.features[0].properties.bearing = turf.bearing(
+                //         turf.point(
+                //             parsedRoutes.features[0].geometry.coordinates[
+                //                 counter >= steps ? counter - 1 : counter
+                //             ]
+                //         ),
+                //         turf.point(
+                //             parsedRoutes.features[0].geometry.coordinates[
+                //                 counter >= steps ? counter : counter + 1
+                //             ]
+                //         )
+                //     );
+
+                //     console.log('run');
+
+                //     mapLibre.getSource('point').setData(pointStart);
+
+                //     // Request the next frame of animation so long the end has not been reached.
+                //     if (counter < steps) {
+                //         requestAnimationFrame(animate);
+                //     }
+
+                //     setCounter((prevCount) => prevCount + 1);
+                // };
+
+                // setTimeout(() => {
+                //     animate();
+                // }, 2500);
 
                 const routeCoordinates =
                     parsedRoutes.features[0].geometry.coordinates;
@@ -127,7 +205,7 @@ const MapLibreGLMap = ({
     }, [eventData, mapRef, mapLibre, createMarker]);
 
     React.useEffect(() => {
-        if (activePlayerData && activePlayerKey) {
+        if (activePlayerData && activePlayerKey && eventData) {
             const parsedRoutes = JSON.parse(eventData.maseRoute);
 
             const playerPoint = document.querySelectorAll("[id^='playerEl-']");

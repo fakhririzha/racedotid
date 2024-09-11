@@ -69,7 +69,7 @@ const Home = () => {
 
     const fetchData = async () => {
         console.log('fetching data...');
-        const race = await fetch('https://map.race.id/api/race/1');
+        const race = await fetch('https://map.race.id/api/race/2');
         const raceJson = await race.json();
         setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}` })));
     };
@@ -240,7 +240,7 @@ const Home = () => {
                                         <CommandInput placeholder="Select a participant..." />
                                         <CommandList>
                                             <CommandEmpty>
-                                                No event found.
+                                                No participant found.
                                             </CommandEmpty>
                                             <CommandGroup>
                                                 {activePlayerKey.map(
