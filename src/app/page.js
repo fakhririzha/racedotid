@@ -39,6 +39,7 @@ const Home = () => {
     // FUTURE DEVELOPMENT
 
     const [raceData, setRaceData] = React.useState(null);
+    const [trailData, setTrailData] = React.useState(null);
     const [eventData, setEventData] = React.useState(null);
 
     const [openRaceData, setOpenRaceData] = React.useState(false);
@@ -71,7 +72,10 @@ const Home = () => {
         console.log('fetching data...');
         const race = await fetch('https://map.race.id/api/race/2');
         const raceJson = await race.json();
+        const trail = await fetch('https://map.race.id/api/data/2');
+        const trailJson = await trail.json();
         setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}` })));
+        setTrailData(trailJson);
     };
 
     React.useEffect(() => {
@@ -312,12 +316,14 @@ const Home = () => {
                     eventData={eventData}
                     raceData={raceData}
                     activeRaceData={activeRaceData}
+                    activeEventData={activeEventData}
                     activePlayerData={activePlayerData}
                     activePlayerKey={activePlayerKey}
                     activePlayerSingle={activePlayerSingle}
                     mapRef={mapRef}
                     mapLibre={mapLibre}
                     setMapLibre={setMapLibre}
+                    trailData={trailData}
                 />
             </div>
         </main>

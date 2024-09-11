@@ -9,12 +9,14 @@ const MapLibreGLMap = ({
     eventData,
     // raceData,
     activeRaceData,
+    activeEventData,
     activePlayerData,
     activePlayerKey,
     activePlayerSingle,
     mapRef,
     mapLibre,
     setMapLibre,
+    trailData,
 }) => {
     const createMarker = React.useCallback(
         (coordinates, id, src) => {
@@ -78,12 +80,12 @@ const MapLibreGLMap = ({
         if (mapRef && eventData && eventData.maseRoute) {
             if (mapLibre._loaded) {
                 const parsedRoutes = JSON.parse(eventData.maseRoute);
-                // console.log(parsedRoutes);
 
                 if (mapLibre.getSource('LineString')) {
                     mapLibre.removeLayer('LineString');
                     mapLibre.removeSource('LineString');
                 }
+
                 mapLibre.addSource('LineString', {
                     type: 'geojson',
                     data: parsedRoutes,
@@ -98,7 +100,7 @@ const MapLibreGLMap = ({
                     },
                     paint: {
                         'line-color': '#000000',
-                        'line-width': 4,
+                        'line-width': 8,
                     },
                 });
 
@@ -219,6 +221,11 @@ const MapLibreGLMap = ({
 
             activePlayerKey.forEach((playerId) => {
                 const playerData = activePlayerData[playerId][0];
+
+                if (playerData['eventId'] != activeEventData.split('_')[0]) {
+                    return;
+                }
+
                 const coordinates = [playerData.Longitude, playerData.Latitude];
 
                 if (coordinates[0] === null || coordinates[1] === null) {
@@ -252,6 +259,7 @@ const MapLibreGLMap = ({
         }
     }, [
         activeRaceData,
+        activeEventData,
         activePlayerData,
         activePlayerKey,
         createMarker,
@@ -272,6 +280,63 @@ const MapLibreGLMap = ({
             const featureCollectionRoutes = turf.featureCollection(pointRoutes);
 
             const idx = activePlayerSingle.split('_')[0];
+
+            const filteredTrailData = trailData.filter((participant) => {
+                return participant['BIBNo'] == idx;
+            });
+
+            const participantLongitude =
+                filteredTrailData[0]['Longitude'].split(',');
+            const participantLatitude =
+                filteredTrailData[0]['Latitude'].split(',');
+
+            const participantCoordinates = [];
+            for (let i = 0; i < participantLongitude.length; i++) {
+                participantCoordinates.push([
+                    parseFloat(participantLongitude[i]),
+                    parseFloat(participantLatitude[i]),
+                ]);
+            }
+
+            const participantRoute = {
+                features: [
+                    {
+                        geometry: {
+                            coordinates: participantCoordinates,
+                            type: 'LineString',
+                        },
+                        properties: {
+                            name: null,
+                            time: null,
+                        },
+                        type: 'Feature',
+                    },
+                ],
+                type: 'FeatureCollection',
+            };
+
+            if (mapLibre.getSource('ParticipantRoute')) {
+                mapLibre.removeLayer('ParticipantRoute');
+                mapLibre.removeSource('ParticipantRoute');
+            }
+
+            mapLibre.addSource('ParticipantRoute', {
+                type: 'geojson',
+                data: participantRoute,
+            });
+            mapLibre.addLayer({
+                id: 'ParticipantRoute',
+                type: 'line',
+                source: 'ParticipantRoute',
+                layout: {
+                    'line-join': 'round',
+                    'line-cap': 'round',
+                },
+                paint: {
+                    'line-color': '#FF0000',
+                    'line-width': 4,
+                },
+            });
             const participantObject = activePlayerData[idx][0];
             const coordinates =
                 participantObject.Longitude === null ||
@@ -349,6 +414,7 @@ const MapLibreGLMap = ({
         createPopup,
         eventData,
         mapLibre,
+        trailData,
     ]);
 
     return (
