@@ -336,7 +336,7 @@ const MapLibreGLMap = ({
                 coordinates,
                 `<div>
                     <h1>#${participantObject.BIBNo}</h1>
-                    <h2>Distance Travelled: ${participantObject.Longitude === null ? 0 : distanceTotal.toLocaleString('id-ID', { style: 'decimal', maximumFractionDigits: 3 })}km</h2>
+                    <!-- <h2>Distance Travelled: ${participantObject.Longitude === null ? 0 : distanceTotal.toLocaleString('id-ID', { style: 'decimal', maximumFractionDigits: 3 })}km</h2> -->
                 </div>
                 `,
                 `playerPopup-${participantObject.BIBNo}`
