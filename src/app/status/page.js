@@ -1,7 +1,7 @@
 'use client'
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import * as dayjs from 'dayjs';
+// import * as dayjs from 'dayjs';
 // import {
 //     DropdownMenu,
 //     DropdownMenuCheckboxItem,
@@ -72,18 +72,14 @@ export const columns = [
             const col = row.original;
 
             if (col.CapturedTime === null) {
-                return <Badge variant="secondary">NO DATA</Badge>
+                return <Badge variant="destructive">NO DATA</Badge>
             }
 
-            let capturedTime = dayjs(col.CapturedTime);
-            let nowTime = dayjs(Date.now());
-            const timeDiff = nowTime.diff(capturedTime, 'minutes');
+            // let capturedTime = dayjs(col.CapturedTime);
+            // let nowTime = dayjs(Date.now());
+            // const timeDiff = nowTime.diff(capturedTime, 'minutes');
 
-            if (timeDiff > 30) {
-                return <Badge variant="destructive">DATA LAMA</Badge>
-            } else {
-                return <Badge>OK</Badge>
-            }
+            return <Badge>NORMAL</Badge>
         },
     },
 ]
