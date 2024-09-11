@@ -111,8 +111,10 @@ const Home = () => {
 
     React.useMemo(() => {
         const fetchParticipantData = async () => {
-            const raceId = activeEventData.split('_')[0];
+            // const raceId = activeEventData.split('_')[0];
+            const raceId = 2;
             const participant = await fetch(
+                // `https://map.race.id/api/participantByRace/${parseInt(raceId)}`
                 `https://map.race.id/api/participantByRace/${parseInt(raceId)}`
             );
             const participantJson = await participant.json();
