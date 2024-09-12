@@ -3,6 +3,13 @@
 import MapLibreGLMap from '@/components/MapLibreGL';
 // import OpenLayersMap from '@/components/OpenLayersMap';
 import { Button } from '@/components/ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     Command,
@@ -12,6 +19,7 @@ import {
     CommandItem,
     CommandList,
 } from '@/components/ui/command';
+import { Label } from "@/components/ui/label";
 import {
     Popover,
     PopoverContent,
@@ -19,6 +27,7 @@ import {
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import * as dayjs from 'dayjs';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import Image from 'next/image';
 import * as React from 'react';
@@ -54,6 +63,7 @@ const Home = () => {
     const [openActivePlayerSingle, setOpenActivePlayerSingle] =
         React.useState(null);
     const [activePlayerSingle, setActivePlayerSingle] = React.useState(null);
+    const [activePlayerSingleData, setActivePlayerSingleData] = React.useState(null);
 
     const mapRef = React.useRef(null);
     const [mapLibre, setMapLibre] = React.useState(null);
@@ -146,7 +156,17 @@ const Home = () => {
         }
     }, [activeEventData]);
 
-    // console.log(activePlayerData)
+    // console.log(activePlayerSingle);
+    // console.log(activePlayerData);
+
+    React.useEffect(() => {
+        if (activePlayerData && activePlayerSingle) {
+            const participantData = activePlayerData[activePlayerSingle.split('_')[0]];
+            setActivePlayerSingleData(participantData[0]);
+        }
+    }, [activePlayerData, activePlayerSingle])
+
+    // console.log(activePlayerSingleData);
 
     return (
         <main className="max-sm:flex-col flex max-sm:h-[100vh]">
@@ -168,6 +188,7 @@ const Home = () => {
                     </span>
                 </div>
                 <Separator />
+                <div className="infoPanel max-sm:max-h-[160px] max-sm:overflow-scroll">
                 <div className="race-selector mt-4">
                     {raceData && (
                         <Popover
@@ -327,6 +348,28 @@ const Home = () => {
                         Show Participant Path
                     </label>
                 </div>}
+                    {activePlayerData && activePlayerKey && activePlayerSingle && activePlayerSingleData && (
+                        <Card className="w-full my-4">
+                            <CardHeader className="max-sm:p-4">
+                                <CardTitle className="max-sm:text-sm">{activePlayerSingleData.Name}</CardTitle>
+                                <CardDescription className="max-sm:text-xs">#{activePlayerSingleData.BIBNo}</CardDescription>
+                            </CardHeader>
+                            <CardContent className="max-sm:p-4">
+                                <form>
+                                    <div className="grid w-full items-center gap-4">
+                                        <div className="flex flex-col space-y-1.5">
+                                            <Label className="max-sm:text-xs" htmlFor="name">Terakhir Dilihat</Label>
+                                            <p className="max-sm:text-xs">{dayjs(activePlayerSingleData.CapturedTime).format('DD-MM-YYYY HH:mm:ss')}</p>
+                                        </div>
+                                        <div className="flex flex-col space-y-1.5">
+                                            <Label className="max-sm:text-xs" htmlFor="name">Koordinat</Label>
+                                            <p className="max-sm:text-xs">{activePlayerSingleData.Longitude}, {activePlayerSingleData.Latitude}</p>
+                                        </div>
+                                    </div>
+                                </form>
+                            </CardContent>
+                        </Card>
+                    )}
                 <div className="reset-button mt-4">
                     <Button
                         variant="outline"
@@ -337,6 +380,7 @@ const Home = () => {
                     >
                         Reset
                     </Button>
+                </div>
                 </div>
             </div>
             <div className="map-wrapper h-[100vh] max-sm:basis-full basis-10/12 max-sm:order-1 w-[100vw]">
