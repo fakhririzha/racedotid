@@ -351,19 +351,19 @@ const Home = () => {
                     {activePlayerData && activePlayerKey && activePlayerSingle && activePlayerSingleData && (
                         <Card className="w-full my-4">
                             <CardHeader className="max-sm:p-4">
-                                <CardTitle className="max-sm:text-sm">{activePlayerSingleData.Name}</CardTitle>
-                                <CardDescription className="max-sm:text-xs">#{activePlayerSingleData.BIBNo}</CardDescription>
+                                <CardTitle className="max-sm:text-sm text-lg">{activePlayerSingleData.Name}</CardTitle>
+                                <CardDescription className="max-sm:text-xs text-sm">#{activePlayerSingleData.BIBNo}</CardDescription>
                             </CardHeader>
                             <CardContent className="max-sm:p-4">
                                 <form>
                                     <div className="grid w-full items-center gap-4">
                                         <div className="flex flex-col space-y-1.5">
-                                            <Label className="max-sm:text-xs" htmlFor="name">Terakhir Dilihat</Label>
-                                            <p className="max-sm:text-xs">{dayjs(activePlayerSingleData.CapturedTime).format('DD-MM-YYYY HH:mm:ss')}</p>
+                                            <Label className="max-sm:text-xs text-sm" htmlFor="name">Terakhir Dilihat</Label>
+                                            <p className="max-sm:text-xs text-sm">{dayjs(activePlayerSingleData.CapturedTime).format('DD-MM-YYYY HH:mm:ss')}</p>
                                         </div>
                                         <div className="flex flex-col space-y-1.5">
                                             <Label className="max-sm:text-xs" htmlFor="name">Koordinat</Label>
-                                            <p className="max-sm:text-xs">{activePlayerSingleData.Longitude}, {activePlayerSingleData.Latitude}</p>
+                                            <p className="max-sm:text-xs text-sm">{activePlayerSingleData.Longitude}, {activePlayerSingleData.Latitude}</p>
                                         </div>
                                     </div>
                                 </form>
