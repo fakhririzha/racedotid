@@ -128,7 +128,7 @@ const Home = () => {
 
     React.useMemo(() => {
         const fetchParticipantData = async () => {
-            // const raceId = activeEventData.split('_')[0];
+            const eventId = activeEventData.split('_')[0];
             const raceId = 2;
             const participant = await fetch(
                 // `https://map.race.id/api/participantByRace/${parseInt(raceId)}`
@@ -136,19 +136,28 @@ const Home = () => {
             );
             const participantJson = await participant.json();
 
-            setActivePlayerData(groupDataByRunnerBIBNo(participantJson));
-            let filtered = []
-            participantJson.filter((x) => {
+            const filteredParticipant = participantJson.filter((x) => {
+                if (x.eventId == eventId) {
+                    return x;
+                }
+            });
+            // console.log(filteredParticipant);
+
+            setActivePlayerData(groupDataByRunnerBIBNo(filteredParticipant));
+            let filteredNull = [];
+            // console.log(participantJson);
+            // console.log(activeEventData);
+            filteredParticipant.filter((x) => {
                 if (x.Longitude == null || x.Name == null) {
-                    filtered.push({
+                    filteredNull.push({
                         BIBNo: x.BIBNo,
                         Name: x.Name,
                     })
                 }
             });
-            console.log(filtered);
+            console.log(filteredNull);
             setActivePlayerKey(
-                Object.keys(groupDataByRunnerBIBNo(participantJson))
+                Object.keys(groupDataByRunnerBIBNo(filteredParticipant))
             );
         };
         if (activeEventData && raceData) {
