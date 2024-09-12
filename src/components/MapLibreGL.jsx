@@ -457,6 +457,12 @@ const MapLibreGLMap = ({
                       ? 'reddot.png'
                       : 'greendot.png'
             );
+            const playerPopup = document.querySelectorAll(
+                "[class*='playerPopupComplete-']"
+            );
+            if (playerPopup.length > 0) {
+                playerPopup.forEach((el) => el.remove());
+            }
             createPopup(
                 coordinates,
                 `<div>
@@ -466,7 +472,7 @@ const MapLibreGLMap = ({
                     <!-- <h2>Distance Travelled: ${participantObject.Longitude === null ? 0 : distanceTotal.toLocaleString('id-ID', { style: 'decimal', maximumFractionDigits: 3 })}km</h2> -->
                 </div>
                 `,
-                `playerPopup-${participantObject.BIBNo}`
+                `playerPopupComplete-${participantObject.BIBNo}`
             );
         }
     }, [
