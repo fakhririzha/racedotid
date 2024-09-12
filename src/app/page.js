@@ -151,10 +151,10 @@ const Home = () => {
                 Object.keys(groupDataByRunnerBIBNo(participantJson))
             );
         };
-        if (activeEventData) {
+        if (activeEventData && raceData) {
             fetchParticipantData();
         }
-    }, [activeEventData]);
+    }, [activeEventData, raceData]);
 
     // console.log(activePlayerSingle);
     // console.log(activePlayerData);
