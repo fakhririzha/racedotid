@@ -124,6 +124,15 @@ const Home = () => {
             const participantJson = await participant.json();
 
             setActivePlayerData(groupDataByRunnerBIBNo(participantJson));
+            let filtered = []
+            participantJson.filter((x) => {
+                if (x.Longitude == null) {
+                    filtered.push({
+                        BIBNo: x.BIBNo,
+                    })
+                }
+            });
+            console.log(filtered)
             setActivePlayerKey(
                 Object.keys(groupDataByRunnerBIBNo(participantJson))
             );
@@ -132,6 +141,8 @@ const Home = () => {
             fetchParticipantData();
         }
     }, [activeEventData]);
+
+    // console.log(activePlayerData)
 
     return (
         <main className="max-sm:flex-col flex max-sm:h-[100vh]">

@@ -298,45 +298,47 @@ const MapLibreGLMap = ({
                 ]);
             }
 
-            const participantRoute = {
-                features: [
-                    {
-                        geometry: {
-                            coordinates: participantCoordinates,
-                            type: 'LineString',
-                        },
-                        properties: {
-                            name: null,
-                            time: null,
-                        },
-                        type: 'Feature',
-                    },
-                ],
-                type: 'FeatureCollection',
-            };
+            // const participantRoute = {
+            //     features: [
+            //         {
+            //             geometry: {
+            //                 coordinates: participantCoordinates,
+            //                 type: 'LineString',
+            //             },
+            //             properties: {
+            //                 name: null,
+            //                 time: null,
+            //             },
+            //             type: 'Feature',
+            //         },
+            //     ],
+            //     type: 'FeatureCollection',
+            // };
 
-            if (mapLibre.getSource('ParticipantRoute')) {
-                mapLibre.removeLayer('ParticipantRoute');
-                mapLibre.removeSource('ParticipantRoute');
-            }
+            // console.log(participantRoute);
 
-            mapLibre.addSource('ParticipantRoute', {
-                type: 'geojson',
-                data: participantRoute,
-            });
-            mapLibre.addLayer({
-                id: 'ParticipantRoute',
-                type: 'line',
-                source: 'ParticipantRoute',
-                layout: {
-                    'line-join': 'round',
-                    'line-cap': 'round',
-                },
-                paint: {
-                    'line-color': '#FF0000',
-                    'line-width': 4,
-                },
-            });
+            // if (mapLibre.getSource('ParticipantRoute')) {
+            //     mapLibre.removeLayer('ParticipantRoute');
+            //     mapLibre.removeSource('ParticipantRoute');
+            // }
+
+            // mapLibre.addSource('ParticipantRoute', {
+            //     type: 'geojson',
+            //     data: participantRoute,
+            // });
+            // mapLibre.addLayer({
+            //     id: 'ParticipantRoute',
+            //     type: 'line',
+            //     source: 'ParticipantRoute',
+            //     layout: {
+            //         'line-join': 'round',
+            //         'line-cap': 'round',
+            //     },
+            //     paint: {
+            //         'line-color': '#FF0000',
+            //         'line-width': 4,
+            //     },
+            // });
             const participantObject = activePlayerData[idx][0];
             const coordinates =
                 participantObject.Longitude === null ||
