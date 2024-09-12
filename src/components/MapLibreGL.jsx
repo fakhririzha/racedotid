@@ -80,6 +80,7 @@ const MapLibreGLMap = ({
     React.useEffect(() => {
         if (mapRef && eventData && eventData.maseRoute) {
             if (mapLibre._loaded) {
+                mapLibre.redraw();
                 const parsedRoutes = JSON.parse(eventData.maseRoute);
 
                 if (mapLibre.getSource('LineString')) {

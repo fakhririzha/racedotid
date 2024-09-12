@@ -93,7 +93,7 @@ const Home = () => {
 
     React.useEffect(() => {
         fetchData();
-        const intervalId = setInterval(fetchData, 10000);
+        const intervalId = setInterval(fetchData, 5000);
         return () => clearInterval(intervalId);
     }, []);
 
