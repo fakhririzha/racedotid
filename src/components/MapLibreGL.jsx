@@ -17,6 +17,7 @@ const MapLibreGLMap = ({
     mapLibre,
     setMapLibre,
     trailData,
+    showPath,
 }) => {
     const createMarker = React.useCallback(
         (coordinates, id, src) => {
@@ -298,47 +299,55 @@ const MapLibreGLMap = ({
                 ]);
             }
 
-            // const participantRoute = {
-            //     features: [
-            //         {
-            //             geometry: {
-            //                 coordinates: participantCoordinates,
-            //                 type: 'LineString',
-            //             },
-            //             properties: {
-            //                 name: null,
-            //                 time: null,
-            //             },
-            //             type: 'Feature',
-            //         },
-            //     ],
-            //     type: 'FeatureCollection',
-            // };
+            if (showPath) {
+                const participantRoute = {
+                    features: [
+                        {
+                            geometry: {
+                                coordinates: participantCoordinates,
+                                type: 'LineString',
+                            },
+                            properties: {
+                                name: null,
+                                time: null,
+                            },
+                            type: 'Feature',
+                        },
+                    ],
+                    type: 'FeatureCollection',
+                };
 
-            // console.log(participantRoute);
+                // console.log(participantRoute);
 
-            // if (mapLibre.getSource('ParticipantRoute')) {
-            //     mapLibre.removeLayer('ParticipantRoute');
-            //     mapLibre.removeSource('ParticipantRoute');
-            // }
+                if (mapLibre.getSource('ParticipantRoute')) {
+                    mapLibre.removeLayer('ParticipantRoute');
+                    mapLibre.removeSource('ParticipantRoute');
+                }
 
-            // mapLibre.addSource('ParticipantRoute', {
-            //     type: 'geojson',
-            //     data: participantRoute,
-            // });
-            // mapLibre.addLayer({
-            //     id: 'ParticipantRoute',
-            //     type: 'line',
-            //     source: 'ParticipantRoute',
-            //     layout: {
-            //         'line-join': 'round',
-            //         'line-cap': 'round',
-            //     },
-            //     paint: {
-            //         'line-color': '#FF0000',
-            //         'line-width': 4,
-            //     },
-            // });
+                mapLibre.addSource('ParticipantRoute', {
+                    type: 'geojson',
+                    data: participantRoute,
+                });
+                mapLibre.addLayer({
+                    id: 'ParticipantRoute',
+                    type: 'line',
+                    source: 'ParticipantRoute',
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round',
+                    },
+                    paint: {
+                        'line-color': '#FF0000',
+                        'line-width': 4,
+                    },
+                });
+            } else {
+                if (mapLibre.getSource('ParticipantRoute')) {
+                    mapLibre.removeLayer('ParticipantRoute');
+                    mapLibre.removeSource('ParticipantRoute');
+                }
+            }
+
             const participantObject = activePlayerData[idx][0];
             const coordinates =
                 participantObject.Longitude === null ||
@@ -403,6 +412,8 @@ const MapLibreGLMap = ({
                 coordinates,
                 `<div>
                     <h1>#${participantObject.BIBNo}</h1>
+                    <h1>${participantObject.Name}</h1>
+                    <h2><em>Last Seen: ${dayjs(participantObject.CapturedTime).format('DD-MM-YYYY HH:mm:ss')}</em></h2>
                     <!-- <h2>Distance Travelled: ${participantObject.Longitude === null ? 0 : distanceTotal.toLocaleString('id-ID', { style: 'decimal', maximumFractionDigits: 3 })}km</h2> -->
                 </div>
                 `,
@@ -417,6 +428,7 @@ const MapLibreGLMap = ({
         eventData,
         mapLibre,
         trailData,
+        showPath,
     ]);
 
     return (

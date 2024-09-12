@@ -3,6 +3,7 @@
 import MapLibreGLMap from '@/components/MapLibreGL';
 // import OpenLayersMap from '@/components/OpenLayersMap';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     Command,
     CommandEmpty,
@@ -41,6 +42,7 @@ const Home = () => {
     const [raceData, setRaceData] = React.useState(null);
     const [trailData, setTrailData] = React.useState(null);
     const [eventData, setEventData] = React.useState(null);
+    const [showPath, setShowPath] = React.useState(false);
 
     const [openRaceData, setOpenRaceData] = React.useState(false);
     const [activePlayerData, setActivePlayerData] = React.useState(null);
@@ -132,7 +134,7 @@ const Home = () => {
                     })
                 }
             });
-            console.log(filtered)
+            // console.log(filtered)
             setActivePlayerKey(
                 Object.keys(groupDataByRunnerBIBNo(participantJson))
             );
@@ -303,6 +305,15 @@ const Home = () => {
                         )}
                     </div>
                 )}
+                {activePlayerData && activePlayerKey && <div className="items-top flex space-x-2 pt-4">
+                    <Checkbox id="terms1" className="border-white" disabled={!activePlayerSingle} checked={showPath} onCheckedChange={() => setShowPath(!showPath)} />
+                    <label
+                        htmlFor="terms1"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary-foreground"
+                    >
+                        Show Participant Path
+                    </label>
+                </div>}
                 <div className="reset-button mt-4">
                     <Button
                         variant="outline"
@@ -335,6 +346,7 @@ const Home = () => {
                     mapLibre={mapLibre}
                     setMapLibre={setMapLibre}
                     trailData={trailData}
+                    showPath={showPath}
                 />
             </div>
         </main>
