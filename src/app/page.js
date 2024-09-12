@@ -129,9 +129,10 @@ const Home = () => {
             setActivePlayerData(groupDataByRunnerBIBNo(participantJson));
             let filtered = []
             participantJson.filter((x) => {
-                if (x.Longitude == null) {
+                if (x.Longitude == null || x.Name == null) {
                     filtered.push({
                         BIBNo: x.BIBNo,
+                        Name: x.Name,
                     })
                 }
             });
@@ -151,7 +152,7 @@ const Home = () => {
         <main className="max-sm:flex-col flex max-sm:h-[100vh]">
             <div className="sidebar basis-2/12 bg-white px-4 py-2 max-sm:order-2">
                 <div className="title-wrapper my-2 text-center max-sm:mb-2 max-sm:mt-0">
-                    <div className="relative h-[320px] max-sm:h-[80px]">
+                    <div className="relative h-[160px] max-sm:h-[80px]">
                         <Image
                             src="logopon.png"
                             alt="Picture of the author"
