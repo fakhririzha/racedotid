@@ -137,7 +137,7 @@ const Home = () => {
             const participantJson = await participant.json();
 
             const filteredParticipant = participantJson.filter((x) => {
-                if (x.eventId == eventId) {
+                if (x.eventId == eventId && x.Name != null) {
                     return x;
                 }
             });
