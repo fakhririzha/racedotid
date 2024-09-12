@@ -111,6 +111,20 @@ const MapLibreGLMap = ({
                 //         parsedRoutes.features[0].geometry.coordinates.length - 1
                 //     ];
 
+                // const pointRoute = {
+                //     type: 'FeatureCollection',
+                //     features: [
+                //         {
+                //             type: 'Feature',
+                //             properties: {},
+                //             geometry: {
+                //                 type: 'LineString',
+                //                 coordinates: [orig, dest],
+                //             },
+                //         },
+                //     ],
+                // };
+
                 // const pointStart = {
                 //     type: 'FeatureCollection',
                 //     features: [
@@ -125,25 +139,57 @@ const MapLibreGLMap = ({
                 //     ],
                 // };
 
-                // mapLibre.addSource('point', {
+                // const lineDistance = turf.distance(
+                //     pointRoute.features[0],
+                //     'kilometers'
+                // );
+
+                // const arc = [];
+
+                // const steps = 10000;
+
+                // for (let i = 0; i < lineDistance; i += lineDistance / steps) {
+                //     const segment = turf.along(
+                //         pointRoute.features[0],
+                //         i,
+                //         'kilometers'
+                //     );
+                //     arc.push(segment.geometry.coordinates);
+                // }
+
+                // pointRoute.features[0].geometry.coordinates = arc;
+
+                // mapLibre.addSource('PointRoute', {
+                //     type: 'geojson',
+                //     data: pointRoute,
+                // });
+                // mapLibre.addSource('PointStart', {
                 //     type: 'geojson',
                 //     data: pointStart,
                 // });
 
                 // mapLibre.addLayer({
+                //     id: 'route',
+                //     source: 'PointRoute',
+                //     type: 'line',
+                //     paint: {
+                //         'line-width': 2,
+                //         'line-color': '#007cbf',
+                //     },
+                // });
+
+                // mapLibre.addLayer({
                 //     id: 'point',
-                //     source: 'point',
+                //     source: 'PointStart',
                 //     type: 'symbol',
                 //     layout: {
-                //         'icon-image': 'airport_15',
+                //         'icon-image': 'redflag.ng',
                 //         'icon-rotate': ['get', 'bearing'],
                 //         'icon-rotation-alignment': 'map',
                 //         'icon-overlap': 'always',
                 //         'icon-ignore-placement': true,
                 //     },
                 // });
-
-                // const steps = 10000;
 
                 // console.log(pointStart);
 
@@ -359,6 +405,8 @@ const MapLibreGLMap = ({
                 new maplibregl.LngLatBounds(coordinates, coordinates),
                 { padding: 20 }
             );
+
+            // mapLibre.setZoom(18);
 
             const timeDiff = dayjs().diff(
                 dayjs(participantObject.CapturedTime),
