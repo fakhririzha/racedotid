@@ -227,6 +227,12 @@ const MapLibreGLMap = ({
                 //     animate();
                 // }, 2500);
 
+                const playerPoint =
+                    document.querySelectorAll("[id^='playerEl-']");
+                if (playerPoint.length > 0) {
+                    playerPoint.forEach((el) => el.remove());
+                }
+
                 const routeCoordinates =
                     parsedRoutes.features[0].geometry.coordinates;
                 const bounds = routeCoordinates.reduce(
