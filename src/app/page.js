@@ -20,6 +20,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
+import Image from 'next/image';
 import * as React from 'react';
 
 const Home = () => {
@@ -134,7 +135,7 @@ const Home = () => {
                     })
                 }
             });
-            // console.log(filtered)
+            console.log(filtered);
             setActivePlayerKey(
                 Object.keys(groupDataByRunnerBIBNo(participantJson))
             );
@@ -148,9 +149,20 @@ const Home = () => {
 
     return (
         <main className="max-sm:flex-col flex max-sm:h-[100vh]">
-            <div className="sidebar basis-2/12 bg-primary p-4 max-sm:order-2">
-                <div className="title-wrapper my-2 text-center">
-                    <span className="text-xl font-bold text-white">
+            <div className="sidebar basis-2/12 bg-white px-4 py-2 max-sm:order-2">
+                <div className="title-wrapper my-2 text-center max-sm:mb-2 max-sm:mt-0">
+                    <div className="relative h-[320px] max-sm:h-[80px]">
+                        <Image
+                            src="logopon.png"
+                            alt="Picture of the author"
+                            sizes='(min-width: 808px) 50vw, 100vw'
+                            fill
+                            style={{
+                                objectFit: 'contain', // cover, contain, none
+                            }}
+                        />
+                    </div>
+                    <span className="text-xl font-bold max-sm:text-sm">
                         PON Trail Run Tracker
                     </span>
                 </div>
@@ -306,10 +318,10 @@ const Home = () => {
                     </div>
                 )}
                 {activePlayerData && activePlayerKey && <div className="items-top flex space-x-2 pt-4">
-                    <Checkbox id="terms1" className="border-white" disabled={!activePlayerSingle} checked={showPath} onCheckedChange={() => setShowPath(!showPath)} />
+                    <Checkbox id="terms1" disabled={!activePlayerSingle} checked={showPath} onCheckedChange={() => setShowPath(!showPath)} />
                     <label
                         htmlFor="terms1"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary-foreground"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
                     >
                         Show Participant Path
                     </label>
