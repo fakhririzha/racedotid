@@ -258,7 +258,9 @@ const MapLibreGLMap = ({
         if (activePlayerData && activePlayerKey && eventData) {
             const parsedRoutes = JSON.parse(eventData.maseRoute);
 
-            const playerPoint = document.querySelectorAll("[id^='playerEl-']");
+            const playerPoint = document.querySelectorAll(
+                "[id^='playerElSpecific-']"
+            );
             const playerPopup = document.querySelectorAll(
                 "[class*='playerPopup-']"
             );
@@ -294,7 +296,7 @@ const MapLibreGLMap = ({
 
                     createMarker(
                         coordinates,
-                        `playerEl-${playerData.BIBNo}`,
+                        `playerElSpecific-${playerData.BIBNo}`,
                         timeDiff > 30 ? 'reddot.png' : 'greendot.png'
                     );
                     createPopup(
