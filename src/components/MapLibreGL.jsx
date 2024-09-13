@@ -287,7 +287,7 @@ const MapLibreGLMap = ({
                 if (coordinates[0] === null || coordinates[1] === null) {
                     createMarker(
                         parsedRoutes.features[0].geometry.coordinates[0],
-                        `playerEl-${playerData.BIBNo}`,
+                        `playerElSpecific-${playerData.BIBNo}`,
                         'greydot.png'
                     );
                     createPopup(
