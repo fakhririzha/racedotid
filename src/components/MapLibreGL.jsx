@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { useToast } from '@/components/hooks/use-toast';
 import * as turf from '@turf/turf';
 import * as dayjs from 'dayjs';
 import maplibregl from 'maplibre-gl';
@@ -18,7 +19,10 @@ const MapLibreGLMap = ({
     setMapLibre,
     trailData,
     showPath,
+    setActivePlayerSingle,
 }) => {
+    const { toast } = useToast();
+
     const createMarker = React.useCallback(
         (coordinates, id, src) => {
             const marker = document.createElement('img');
@@ -341,10 +345,22 @@ const MapLibreGLMap = ({
                 return participant['BIBNo'] == idx;
             });
 
-            const participantLongitude =
-                filteredTrailData[0]['Longitude'].split(',');
-            const participantLatitude =
-                filteredTrailData[0]['Latitude'].split(',');
+            const pLongitude = filteredTrailData[0]['Longitude'];
+            const pLatitude = filteredTrailData[0]['Latitude'];
+
+            if (!pLongitude || !pLatitude) {
+                toast({
+                    // variant: 'destructive',
+                    title: 'Koordinat peserta tidak ditemukan.',
+                    description: 'Silahkan coba beberapa saat lagi.',
+                    // action: <ToastAction altText="Try again">Try again</ToastAction>,
+                });
+                setActivePlayerSingle(null);
+                return;
+            }
+
+            const participantLongitude = pLongitude.split(',');
+            const participantLatitude = pLatitude.split(',');
 
             const participantCoordinates = [];
             for (let i = 0; i < participantLongitude.length; i++) {
@@ -492,6 +508,8 @@ const MapLibreGLMap = ({
         mapLibre,
         trailData,
         showPath,
+        toast,
+        setActivePlayerSingle,
     ]);
 
     return (

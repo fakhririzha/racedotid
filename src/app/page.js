@@ -135,17 +135,17 @@ const Home = () => {
                 `https://map.race.id/api/participantByRace/${parseInt(raceId)}`
             );
             const participantJson = await participant.json();
+            // console.log(participantJson);
 
             const filteredParticipant = participantJson.filter((x) => {
                 if (x.eventId == eventId && x.Name != null) {
                     return x;
                 }
             });
-            // console.log(filteredParticipant);
+            console.log(filteredParticipant);
 
             setActivePlayerData(groupDataByRunnerBIBNo(filteredParticipant));
             let filteredNull = [];
-            // console.log(participantJson);
             // console.log(activeEventData);
             filteredParticipant.filter((x) => {
                 if (x.Longitude == null || x.Name == null) {
@@ -413,6 +413,7 @@ const Home = () => {
                     setMapLibre={setMapLibre}
                     trailData={trailData}
                     showPath={showPath}
+                    setActivePlayerSingle={setActivePlayerSingle}
                 />
             </div>
         </main>

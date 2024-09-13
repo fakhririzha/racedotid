@@ -1,3 +1,4 @@
+import { Toaster } from "@/components/ui/toaster";
 import { Inter } from 'next/font/google';
 import PropTypes from 'prop-types';
 import * as React from 'react';
@@ -13,7 +14,10 @@ export const metadata = {
 const RootLayout = ({ children }) => {
     return (
         <html lang="en">
-            <body className={inter.className}>{children}</body>
+            <body className={inter.className}>
+                {children}
+                <Toaster />
+            </body>
         </html>
     );
 };
