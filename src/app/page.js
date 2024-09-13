@@ -142,7 +142,7 @@ const Home = () => {
                     return x;
                 }
             });
-            console.log(filteredParticipant);
+            // console.log(filteredParticipant);
 
             setActivePlayerData(groupDataByRunnerBIBNo(filteredParticipant));
             let filteredNull = [];
@@ -155,7 +155,7 @@ const Home = () => {
                     })
                 }
             });
-            console.log(filteredNull);
+            // console.log(filteredNull);
             setActivePlayerKey(
                 Object.keys(groupDataByRunnerBIBNo(filteredParticipant))
             );
