@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 "use client";
 // Inspired by react-hot-toast library
-import * as React from "react"
+import * as React from "react";
 
 const TOAST_LIMIT = 1
 const TOAST_REMOVE_DELAY = 1000000
@@ -19,7 +21,7 @@ function genId() {
   return count.toString();
 }
 
-const toastTimeouts = new Map()
+const toastTimeouts = new Map();
 
 const addToRemoveQueue = (toastId) => {
   if (toastTimeouts.has(toastId)) {
@@ -152,4 +154,5 @@ function useToast() {
   };
 }
 
-export { useToast, toast }
+export { toast, useToast };
+
