@@ -53,6 +53,7 @@ const Home = () => {
     const [trailData, setTrailData] = React.useState(null);
     const [eventData, setEventData] = React.useState(null);
     const [showPath, setShowPath] = React.useState(false);
+    const [autoZoom, setAutoZoom] = React.useState(true);
 
     const [openRaceData, setOpenRaceData] = React.useState(false);
     const [activePlayerData, setActivePlayerData] = React.useState(null);
@@ -93,7 +94,10 @@ const Home = () => {
 
     React.useEffect(() => {
         fetchData();
+
         const intervalId = setInterval(fetchData, 5000);
+
+        // cleanup function
         return () => clearInterval(intervalId);
     }, []);
 
@@ -173,9 +177,9 @@ const Home = () => {
             const participantData = activePlayerData[activePlayerSingle.split('_')[0]];
             setActivePlayerSingleData(participantData[0]);
         }
-    }, [activePlayerData, activePlayerSingle])
+    }, [activePlayerData, activePlayerSingle]);
 
-    // console.log(activePlayerSingleData);
+    // console.log(autoZoom);
 
     return (
         <main className="max-sm:flex-col flex max-sm:h-[100vh]">
@@ -198,84 +202,11 @@ const Home = () => {
                 </div>
                 <Separator />
                 <div className="infoPanel max-sm:max-h-[160px] max-sm:overflow-scroll">
-                <div className="race-selector mt-4">
-                    {raceData && (
-                        <Popover
-                            open={openRaceData}
-                            onOpenChange={setOpenRaceData}
-                        >
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    aria-expanded={open}
-                                    className="w-full justify-between"
-                                >
-                                    {activeRaceData
-                                        ? raceData.find(
-                                              (race) =>
-                                                  race.value === activeRaceData
-                                          )?.label
-                                        : 'Pilih perlombaan...'}
-                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-full p-0">
-                                <Command>
-                                    <CommandInput placeholder="Pilih perlombaan..." />
-                                    <CommandList>
-                                        <CommandEmpty>
-                                            Tidak ada perlombaan.
-                                        </CommandEmpty>
-                                        <CommandGroup>
-                                            {raceData.map((race) => (
-                                                <CommandItem
-                                                    className="cursor-pointer"
-                                                    key={race.value}
-                                                    value={race.value}
-                                                    onSelect={(
-                                                        currentValue
-                                                    ) => {
-                                                        setActiveRaceData(
-                                                            currentValue ===
-                                                                activeRaceData
-                                                                ? ''
-                                                                : currentValue
-                                                        );
-                                                        setActiveEventData(
-                                                            currentValue ===
-                                                                activeRaceData
-                                                                ? ''
-                                                                : currentValue
-                                                        );
-                                                        setOpenRaceData(false);
-                                                    }}
-                                                >
-                                                    <Check
-                                                        className={cn(
-                                                            'mr-2 h-4 w-4',
-                                                            activeRaceData ===
-                                                                race.value
-                                                                ? 'opacity-100'
-                                                                : 'opacity-0'
-                                                        )}
-                                                    />
-                                                    {race.label}
-                                                </CommandItem>
-                                            ))}
-                                        </CommandGroup>
-                                    </CommandList>
-                                </Command>
-                            </PopoverContent>
-                        </Popover>
-                    )}
-                </div>
-                {activePlayerData && activePlayerKey && (
-                    <div className="event-selector mt-4">
-                        {activePlayerData && (
+                    <div className="race-selector mt-4">
+                        {raceData && (
                             <Popover
-                                open={openActivePlayerSingle}
-                                onOpenChange={setOpenActivePlayerSingle}
+                                open={openRaceData}
+                                onOpenChange={setOpenRaceData}
                             >
                                 <PopoverTrigger asChild>
                                     <Button
@@ -284,62 +215,58 @@ const Home = () => {
                                         aria-expanded={open}
                                         className="w-full justify-between"
                                     >
-                                        {activePlayerSingle
-                                            ? activePlayerSingle
-                                            : 'Pilih peserta...'}
-                                        {/* {activePlayerSingle
-                                            ? activePlayerKey.find(
-                                                  (event) =>
-                                                      `${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}` ===
-                                                      activePlayerSingle
-                                              )?.label
-                                            : 'Pilih peserta...'} */}
+                                        {activeRaceData
+                                            ? raceData.find(
+                                                (race) =>
+                                                    race.value === activeRaceData
+                                            )?.label
+                                            : 'Pilih perlombaan...'}
                                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-full p-0">
                                     <Command>
-                                        <CommandInput placeholder="Pilih peserta..." />
+                                        <CommandInput placeholder="Pilih perlombaan..." />
                                         <CommandList>
                                             <CommandEmpty>
-                                                Tidak ada peserta.
+                                                Tidak ada perlombaan.
                                             </CommandEmpty>
                                             <CommandGroup>
-                                                {activePlayerKey.map(
-                                                    (event) => {
-                                                        return (
-                                                            <CommandItem
-                                                                className="cursor-pointer"
-                                                                key={`${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}`}
-                                                                value={`${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}`}
-                                                                onSelect={(
-                                                                    currentValue
-                                                                ) => {
-                                                                    setActivePlayerSingle(
-                                                                        currentValue ===
-                                                                            activePlayerSingle
-                                                                            ? ''
-                                                                            : currentValue
-                                                                    );
-                                                                    setOpenActivePlayerSingle(
-                                                                        false
-                                                                    );
-                                                                }}
-                                                            >
-                                                                <Check
-                                                                    className={cn(
-                                                                        'mr-2 h-4 w-4',
-                                                                        activePlayerSingle ===
-                                                                            `${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}`
-                                                                            ? 'opacity-100'
-                                                                            : 'opacity-0'
-                                                                    )}
-                                                                />
-                                                                {`${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}`}
-                                                            </CommandItem>
-                                                        );
-                                                    }
-                                                )}
+                                                {raceData.map((race) => (
+                                                    <CommandItem
+                                                        className="cursor-pointer"
+                                                        key={race.value}
+                                                        value={race.value}
+                                                        onSelect={(
+                                                            currentValue
+                                                        ) => {
+                                                            setActiveRaceData(
+                                                                currentValue ===
+                                                                    activeRaceData
+                                                                    ? ''
+                                                                    : currentValue
+                                                            );
+                                                            setActiveEventData(
+                                                                currentValue ===
+                                                                    activeRaceData
+                                                                    ? ''
+                                                                    : currentValue
+                                                            );
+                                                            setOpenRaceData(false);
+                                                        }}
+                                                    >
+                                                        <Check
+                                                            className={cn(
+                                                                'mr-2 h-4 w-4',
+                                                                activeRaceData ===
+                                                                    race.value
+                                                                    ? 'opacity-100'
+                                                                    : 'opacity-0'
+                                                            )}
+                                                        />
+                                                        {race.label}
+                                                    </CommandItem>
+                                                ))}
                                             </CommandGroup>
                                         </CommandList>
                                     </Command>
@@ -347,16 +274,96 @@ const Home = () => {
                             </Popover>
                         )}
                     </div>
-                )}
-                {activePlayerData && activePlayerKey && <div className="items-top flex space-x-2 pt-4">
-                    <Checkbox id="terms1" disabled={!activePlayerSingle} checked={showPath} onCheckedChange={() => setShowPath(!showPath)} />
-                    <label
-                        htmlFor="terms1"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
-                    >
-                        Show Participant Path
-                    </label>
-                </div>}
+                    {activePlayerData && activePlayerKey && (
+                        <div className="event-selector mt-4">
+                            {activePlayerData && (
+                                <Popover
+                                    open={openActivePlayerSingle}
+                                    onOpenChange={setOpenActivePlayerSingle}
+                                >
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            role="combobox"
+                                            aria-expanded={open}
+                                            className="w-full justify-between"
+                                        >
+                                            {activePlayerSingle
+                                                ? activePlayerSingle
+                                                : 'Pilih peserta...'}
+                                            {/* {activePlayerSingle
+                                                ? activePlayerKey.find(
+                                                    (event) =>
+                                                        `${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}` ===
+                                                        activePlayerSingle
+                                                )?.label
+                                                : 'Pilih peserta...'} */}
+                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-full p-0">
+                                        <Command>
+                                            <CommandInput placeholder="Pilih peserta..." />
+                                            <CommandList>
+                                                <CommandEmpty>
+                                                    Tidak ada peserta.
+                                                </CommandEmpty>
+                                                <CommandGroup>
+                                                    {activePlayerKey.map(
+                                                        (event) => {
+                                                            return (
+                                                                <CommandItem
+                                                                    className="cursor-pointer"
+                                                                    key={`${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}`}
+                                                                    value={`${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}`}
+                                                                    onSelect={(
+                                                                        currentValue
+                                                                    ) => {
+                                                                        if (activePlayerSingle !== null && currentValue !== activePlayerSingle) {
+                                                                            setAutoZoom('Reset New Participant');
+                                                                        }
+                                                                        setActivePlayerSingle(
+                                                                            currentValue ===
+                                                                                activePlayerSingle
+                                                                                ? ''
+                                                                                : currentValue
+                                                                        );
+                                                                        setOpenActivePlayerSingle(
+                                                                            false
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    <Check
+                                                                        className={cn(
+                                                                            'mr-2 h-4 w-4',
+                                                                            activePlayerSingle ===
+                                                                                `${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}`
+                                                                                ? 'opacity-100'
+                                                                                : 'opacity-0'
+                                                                        )}
+                                                                    />
+                                                                    {`${activePlayerData[event][0].BIBNo}_${activePlayerData[event][0].Name}`}
+                                                                </CommandItem>
+                                                            );
+                                                        }
+                                                    )}
+                                                </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                            )}
+                        </div>
+                    )}
+                    {activePlayerData && activePlayerKey && <div className="items-top flex space-x-2 pt-4">
+                        <Checkbox id="terms1" disabled={!activePlayerSingle} checked={showPath} onCheckedChange={() => setShowPath(!showPath)} />
+                        <label
+                            htmlFor="terms1"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
+                        >
+                            Lihat Trail Peserta
+                        </label>
+                    </div>}
                     {activePlayerData && activePlayerKey && activePlayerSingle && activePlayerSingleData && (
                         <Card className="w-full my-4">
                             <CardHeader className="max-sm:p-4">
@@ -379,17 +386,47 @@ const Home = () => {
                             </CardContent>
                         </Card>
                     )}
-                <div className="reset-button mt-4">
-                    <Button
-                        variant="outline"
-                        onClick={() => {
-                            window.location.reload();
-                        }}
-                        className="w-full"
-                    >
-                        Reset
-                    </Button>
-                </div>
+                    {activePlayerData && activePlayerKey && activePlayerSingle && activePlayerSingleData && <div className="reset-button mt-4">
+                        <label
+                            htmlFor="terms1"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
+                        >
+                            Menu Autofocus
+                        </label>
+                        <div className="grid grid-cols-2 gap-x-2 mt-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    setAutoZoom('Reset')
+                                }}
+                                className="w-full"
+                                disabled={autoZoom === true || autoZoom === 'Reset'}
+                            >
+                                Reset/On
+                            </Button>
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    setAutoZoom(false)
+                                }}
+                                className="w-full"
+                                disabled={autoZoom === false}
+                            >
+                                Off
+                            </Button>
+                        </div>
+                    </div>}
+                    <div className="reset-button mt-4">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                window.location.reload();
+                            }}
+                            className="w-full"
+                        >
+                            Reset Halaman
+                        </Button>
+                    </div>
                 </div>
             </div>
             <div className="map-wrapper h-[100vh] max-sm:basis-full basis-10/12 max-sm:order-1 w-[100vw]">
@@ -414,6 +451,8 @@ const Home = () => {
                     trailData={trailData}
                     showPath={showPath}
                     setActivePlayerSingle={setActivePlayerSingle}
+                    autoZoom={autoZoom}
+                    setAutoZoom={setAutoZoom}
                 />
             </div>
         </main>

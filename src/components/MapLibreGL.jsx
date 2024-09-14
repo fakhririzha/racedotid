@@ -20,6 +20,8 @@ const MapLibreGLMap = ({
     trailData,
     showPath,
     setActivePlayerSingle,
+    autoZoom,
+    setAutoZoom,
 }) => {
     const { toast } = useToast();
 
@@ -84,7 +86,6 @@ const MapLibreGLMap = ({
     React.useEffect(() => {
         if (mapRef && eventData && eventData.maseRoute) {
             if (mapLibre._loaded) {
-                mapLibre.redraw();
                 const parsedRoutes = JSON.parse(eventData.maseRoute);
 
                 if (mapLibre.getSource('LineString')) {
@@ -262,6 +263,7 @@ const MapLibreGLMap = ({
                 );
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [eventData, mapRef, mapLibre, createMarker]);
 
     React.useEffect(() => {
@@ -289,6 +291,7 @@ const MapLibreGLMap = ({
                 const coordinates = [playerData.Longitude, playerData.Latitude];
 
                 if (coordinates[0] === null || coordinates[1] === null) {
+                    // console.log('null', playerData.BIBNo);
                     createMarker(
                         parsedRoutes.features[0].geometry.coordinates[0],
                         `playerElSpecific-${playerData.BIBNo}`,
@@ -303,6 +306,9 @@ const MapLibreGLMap = ({
                     let capturedTime = dayjs(playerData.CapturedTime);
                     let nowTime = dayjs(Date.now());
                     const timeDiff = nowTime.diff(capturedTime, 'minutes');
+
+                    // if (timeDiff > 30)
+                    //     console.log('inactive', playerData.BIBNo);
 
                     createMarker(
                         coordinates,
@@ -426,10 +432,20 @@ const MapLibreGLMap = ({
                     ? parsedRoutes.features[0].geometry.coordinates[0]
                     : [participantObject.Longitude, participantObject.Latitude];
 
-            mapLibre.fitBounds(
-                new maplibregl.LngLatBounds(coordinates, coordinates),
-                { padding: 20 }
-            );
+            // console.log(showPath);
+            // console.log(activePlayerSingle);
+            // console.log(!showPath && !activePlayerSingle);
+
+            if (
+                autoZoom === true ||
+                autoZoom === 'Reset' ||
+                autoZoom === 'Reset New Participant'
+            ) {
+                mapLibre.fitBounds(
+                    new maplibregl.LngLatBounds(coordinates, coordinates),
+                    { padding: 20 }
+                );
+            }
 
             // mapLibre.setZoom(18);
 
@@ -472,6 +488,8 @@ const MapLibreGLMap = ({
             // console.log('distanceTotal', distanceTotal);
             // console.log('participantObject', participantObject);
 
+            // if (timeDiff > 30) console.log(participantObject.BIBNo);
+
             createMarker(
                 coordinates,
                 'playerEl',
@@ -498,7 +516,13 @@ const MapLibreGLMap = ({
                 `,
                 `playerPopupComplete-${participantObject.BIBNo}`
             );
+            if (
+                autoZoom !== 'Reset' &&
+                (autoZoom === true || autoZoom === 'Reset New Participant')
+            )
+                setAutoZoom(false);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         activePlayerData,
         activePlayerSingle,
@@ -510,6 +534,7 @@ const MapLibreGLMap = ({
         showPath,
         toast,
         setActivePlayerSingle,
+        autoZoom,
     ]);
 
     return (
