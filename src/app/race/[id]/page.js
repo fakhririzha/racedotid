@@ -69,6 +69,9 @@ const Race = () => {
     const [activePlayerSingle, setActivePlayerSingle] = React.useState(null);
     const [activePlayerSingleData, setActivePlayerSingleData] = React.useState(null);
 
+    const [isShowNumber, setIsShowNumber] = React.useState(true);
+    const [isShowName, setIsShowName] = React.useState(true);
+
     const mapRef = React.useRef(null);
     const [mapLibre, setMapLibre] = React.useState(null);
 
@@ -117,7 +120,7 @@ const Race = () => {
 
     // FUTURE DEVELOPMENT
 
-    // console.log('raceData', raceData);
+    console.log('autoZoom', autoZoom);
 
     const fetchEventData = async () => {
         try {
@@ -336,6 +339,7 @@ const Race = () => {
                                                                         setOpenActivePlayerSingle(
                                                                             false
                                                                         );
+                                                                        setAutoZoom('Reset');
                                                                     }}
                                                                 >
                                                                     <Check
@@ -392,6 +396,32 @@ const Race = () => {
                         </Card>
                     )}
                     {activePlayerData && activePlayerKey && activePlayerSingle && activePlayerSingleData && <div className="reset-button mt-4">
+                        <div className="flex flex-col gap-y-2 pb-4">
+                            <label
+                                htmlFor="terms2"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
+                            >
+                                Label Options
+                            </label>
+                            <div className="flex gap-x-2 py-1">
+                                <Checkbox id="terms3" disabled={!activePlayerSingle} checked={isShowNumber} onCheckedChange={() => setIsShowNumber(!isShowNumber)} />
+                                <label
+                                    htmlFor="terms3"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
+                                >
+                                    Tampilkan Nomor
+                                </label>
+                            </div>
+                            <div className="flex gap-x-2 py-1">
+                                <Checkbox id="terms4" disabled={!activePlayerSingle} checked={isShowName} onCheckedChange={() => setIsShowName(!isShowName)} />
+                                <label
+                                    htmlFor="terms4"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
+                                >
+                                    Tampilkan Nama
+                                </label>
+                            </div>
+                        </div>
                         <label
                             htmlFor="terms1"
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
@@ -420,6 +450,25 @@ const Race = () => {
                                 Off
                             </Button>
                         </div>
+                        <div className="grid grid-cols-1 mt-2">
+                            <Button
+                                variant="outline"
+                                onClick={() => {
+                                    setAutoZoom('Back to Center');
+                                    setActivePlayerSingle(null);
+                                    setActivePlayerSingleData(null);
+                                    const playerPopup = document.querySelectorAll(
+                                        "[class*='playerPopupComplete-']"
+                                    );
+                                    if (playerPopup.length > 0) {
+                                        playerPopup.forEach((el) => el.remove());
+                                    }
+                                }}
+                                className="w-full"
+                            >
+                                Center to Track
+                            </Button>
+                        </div>
                     </div>}
                     <div className="reset-button mt-4">
                         <Button
@@ -429,7 +478,7 @@ const Race = () => {
                             }}
                             className="w-full"
                         >
-                            Reset Halaman
+                            Reload Halaman
                         </Button>
                     </div>
                 </div>
@@ -458,6 +507,8 @@ const Race = () => {
                     setActivePlayerSingle={setActivePlayerSingle}
                     autoZoom={autoZoom}
                     setAutoZoom={setAutoZoom}
+                    isShowName={isShowName}
+                    isShowNumber={isShowNumber}
                 />
             </div>
         </main>

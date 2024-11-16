@@ -22,6 +22,8 @@ const MapLibreGLMap = ({
     setActivePlayerSingle,
     autoZoom,
     setAutoZoom,
+    isShowName,
+    isShowNumber,
 }) => {
     const { toast } = useToast();
 
@@ -87,6 +89,8 @@ const MapLibreGLMap = ({
         if (mapRef && eventData && eventData.maseRoute) {
             if (mapLibre._loaded) {
                 const parsedRoutes = JSON.parse(eventData.maseRoute);
+                // const parsedWaypoints = JSON.parse(eventData.maseWaypoints);
+                // console.log(parsedWaypoints);
 
                 if (mapLibre.getSource('LineString')) {
                     mapLibre.removeLayer('LineString');
@@ -432,7 +436,9 @@ const MapLibreGLMap = ({
                     ? parsedRoutes.features[0].geometry.coordinates[0]
                     : [participantObject.Longitude, participantObject.Latitude];
 
-            // console.log(showPath);
+            console.log('parsedRoutes', parsedRoutes);
+            console.log('participantObject', participantObject);
+            console.log('autoZoom', autoZoom);
             // console.log(activePlayerSingle);
             // console.log(!showPath && !activePlayerSingle);
 
@@ -505,11 +511,36 @@ const MapLibreGLMap = ({
             if (playerPopup.length > 0) {
                 playerPopup.forEach((el) => el.remove());
             }
+            let nameText = '';
+            let numberText = '';
+            if (isShowName) {
+                nameText = `<h1>${participantObject.Name}</h1>`;
+            } else {
+                nameText = '';
+            }
+            if (isShowNumber) {
+                numberText = `<h2>#${participantObject.BIBNo}</h2>`;
+            }
+
+            if (!isShowName && !isShowNumber) {
+                numberText = `<h2>#${participantObject.BIBNo}</h2>`;
+            }
+            // createPopup(
+            //     coordinates,
+            //     `<div>
+            //         <h1>#${participantObject.BIBNo}</h1>
+            //         <h1>${participantObject.Name}</h1>
+            //         <h2><em>Last Seen: ${dayjs(participantObject.CapturedTime).format('DD-MM-YYYY HH:mm:ss')}</em></h2>
+            //         <!-- <h2>Distance Travelled: ${participantObject.Longitude === null ? 0 : distanceTotal.toLocaleString('id-ID', { style: 'decimal', maximumFractionDigits: 3 })}km</h2> -->
+            //     </div>
+            //     `,
+            //     `playerPopupComplete-${participantObject.BIBNo}`
+            // );
             createPopup(
                 coordinates,
                 `<div>
-                    <h1>#${participantObject.BIBNo}</h1>
-                    <h1>${participantObject.Name}</h1>
+                    ${numberText}
+                    ${nameText}
                     <h2><em>Last Seen: ${dayjs(participantObject.CapturedTime).format('DD-MM-YYYY HH:mm:ss')}</em></h2>
                     <!-- <h2>Distance Travelled: ${participantObject.Longitude === null ? 0 : distanceTotal.toLocaleString('id-ID', { style: 'decimal', maximumFractionDigits: 3 })}km</h2> -->
                 </div>
@@ -521,6 +552,20 @@ const MapLibreGLMap = ({
                 (autoZoom === true || autoZoom === 'Reset New Participant')
             )
                 setAutoZoom(false);
+        } else if (autoZoom === 'Back to Center') {
+            const parsedRoutes = JSON.parse(eventData.maseRoute);
+
+            const routeCoordinates =
+                parsedRoutes.features[0].geometry.coordinates;
+            const bounds = routeCoordinates.reduce(
+                (bounds, coords) => bounds.extend(coords),
+                new maplibregl.LngLatBounds(
+                    routeCoordinates[0],
+                    routeCoordinates[0]
+                )
+            );
+
+            mapLibre.fitBounds(bounds, { padding: 20 });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
@@ -535,6 +580,8 @@ const MapLibreGLMap = ({
         toast,
         setActivePlayerSingle,
         autoZoom,
+        isShowName,
+        isShowNumber,
     ]);
 
     return (
