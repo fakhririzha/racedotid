@@ -91,7 +91,7 @@ const Race = () => {
         const raceJson = await race.json();
         const trail = await fetch(`https://map.race.id/api/data/${params.id}`);
         const trailJson = await trail.json();
-        setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}`, logo: `${race.raceLogo}` })));
+        setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
         setTrailData(trailJson);
     };
 
@@ -192,8 +192,8 @@ const Race = () => {
                 <div className="title-wrapper my-2 text-center max-sm:mb-2 max-sm:mt-0">
                     <div className="relative h-[160px] max-sm:h-[80px]">
                         <Image
-                            src={raceData && raceData[0] && raceData[0].logo || "../logo-default.png"}
-                            alt="Picture of the author"
+                            src={raceData && raceData[0] && raceData[0].logo !== null ? raceData[0].logo : "../logo-default.png"}
+                            alt="logo-default"
                             sizes='(min-width: 808px) 50vw, 100vw'
                             fill
                             style={{
