@@ -58,10 +58,11 @@ const Race = () => {
     const [showPath, setShowPath] = React.useState(false);
     const [autoZoom, setAutoZoom] = React.useState(true);
 
-    const [openRaceData, setOpenRaceData] = React.useState(false);
     const [activePlayerData, setActivePlayerData] = React.useState(null);
     const [activePlayerKey, setActivePlayerKey] = React.useState(null);
 
+    const [activeRaceId, setActiveRaceId] = React.useState(null);
+    // eslint-disable-next-line no-unused-vars
     const [activeRaceData, setActiveRaceData] = React.useState(null);
     const [activeEventData, setActiveEventData] = React.useState(null);
     const [openActivePlayerSingle, setOpenActivePlayerSingle] =
@@ -87,71 +88,57 @@ const Race = () => {
 
     const fetchData = async () => {
         console.log('fetching data...');
-        const race = await fetch(`https://map.race.id/api/race/${params.id}`);
+        const race = await fetch(`https://map.race.id/api/race/${activeRaceId}`);
         const raceJson = await race.json();
-        const trail = await fetch(`https://map.race.id/api/data/${params.id}`);
+        const trail = await fetch(`https://map.race.id/api/data/${activeRaceId}`);
         const trailJson = await trail.json();
         setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
         setTrailData(trailJson);
     };
 
-    React.useEffect(() => {
-        fetchData();
-
-        const intervalId = setInterval(fetchData, 5000);
-
-        // cleanup function
-        return () => clearInterval(intervalId);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [params.id]);
-
-    // FUTURE DEVELOPMENT
-
-    // const handleRaceChange = (newRaceData) => {
-    //     setState((prevState) => ({ ...prevState, activeRaceData: newRaceData }));
-    // };
-
-    // const handleEventDataChange = (newEventData) => {
-    //     setState((prevState) => ({ ...prevState, activeEventData: newEventData }));
-    // };
-
-    // FUTURE DEVELOPMENT
-
-    // console.log('raceData', raceData);
-
     const fetchEventData = async () => {
         try {
-            const event = await fetch(`https://map.race.id/api/event/${activeRaceData.split('_')[0]}`);
+            const event = await fetch(`https://map.race.id/api/event/${params.id}`);
             const eventJson = await event.json();
             setEventData(eventJson[0]);
+            setActiveRaceId(eventJson[0].maseRaceId);
         } catch (error) {
             console.error(error);
         }
     };
 
     React.useEffect(() => {
-        if (activeRaceData) {
-            fetchEventData();
+        // fetchData();
+        setActiveEventData(params.id);
+        fetchEventData();
+
+        const intervalId = setInterval(fetchEventData, 5000);
+
+        // cleanup function
+        return () => clearInterval(intervalId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [params.id]);
+
+    React.useEffect(() => {
+        if (activeRaceId) {
+            fetchData();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [activeRaceData]);
+    }, [activeRaceId]);
 
     React.useMemo(() => {
         const fetchParticipantData = async () => {
             const eventId = activeEventData.split('_')[0];
             const participant = await fetch(
-                // `https://map.race.id/api/participantByRace/${parseInt(raceId)}`
-                `https://map.race.id/api/participantByRace/${parseInt(params.id)}`
+                `https://map.race.id/api/participantByRace/${parseInt(activeRaceId)}`
             );
             const participantJson = await participant.json();
-            // console.log(participantJson);
 
             const filteredParticipant = participantJson.filter((x) => {
                 if (x.eventId == eventId && x.Name != null) {
                     return x;
                 }
             });
-            // console.log(filteredParticipant);
 
             setActivePlayerData(groupDataByRunnerBIBNo(filteredParticipant));
             let filteredNull = [];
@@ -164,15 +151,15 @@ const Race = () => {
                     })
                 }
             });
-            // console.log(filteredNull);
             setActivePlayerKey(
                 Object.keys(groupDataByRunnerBIBNo(filteredParticipant))
             );
         };
-        if (activeEventData && raceData) {
+        if (activeRaceId) {
             fetchParticipantData();
         }
-    }, [activeEventData, raceData, params]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [activeRaceId]);
 
     // console.log(activePlayerSingle);
     // console.log(activePlayerData);
@@ -201,84 +188,12 @@ const Race = () => {
                             }}
                         />
                     </div>
-                    {/* <span className="text-xl font-bold max-sm:text-sm">
-                        {raceData && raceData[0] && raceData[0].label.split('-')[0] || "Live Tracker"}
-                    </span> */}
+                    <span className="text-xl font-bold max-sm:text-sm">
+                        {raceData && raceData[0] && raceData[0].label || "Live Tracker"}
+                    </span>
                 </div>
                 <Separator />
                 <div className="infoPanel max-sm:max-h-[160px] max-sm:overflow-scroll">
-                    <div className="race-selector mt-4">
-                        {raceData && (
-                            <Popover
-                                open={openRaceData}
-                                onOpenChange={setOpenRaceData}
-                            >
-                                <PopoverTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        role="combobox"
-                                        aria-expanded={open}
-                                        className="w-full justify-between"
-                                    >
-                                        {activeRaceData
-                                            ? raceData.find(
-                                                (race) =>
-                                                    race.value === activeRaceData
-                                            )?.label
-                                            : 'Pilih perlombaan...'}
-                                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-full p-0">
-                                    <Command>
-                                        <CommandInput placeholder="Pilih perlombaan..." />
-                                        <CommandList>
-                                            <CommandEmpty>
-                                                Tidak ada perlombaan.
-                                            </CommandEmpty>
-                                            <CommandGroup>
-                                                {raceData.map((race) => (
-                                                    <CommandItem
-                                                        className="cursor-pointer"
-                                                        key={race.value}
-                                                        value={race.value}
-                                                        onSelect={(
-                                                            currentValue
-                                                        ) => {
-                                                            setActiveRaceData(
-                                                                currentValue ===
-                                                                    activeRaceData
-                                                                    ? ''
-                                                                    : currentValue
-                                                            );
-                                                            setActiveEventData(
-                                                                currentValue ===
-                                                                    activeRaceData
-                                                                    ? ''
-                                                                    : currentValue
-                                                            );
-                                                            setOpenRaceData(false);
-                                                        }}
-                                                    >
-                                                        <Check
-                                                            className={cn(
-                                                                'mr-2 h-4 w-4',
-                                                                activeRaceData ===
-                                                                    race.value
-                                                                    ? 'opacity-100'
-                                                                    : 'opacity-0'
-                                                            )}
-                                                        />
-                                                        {race.label}
-                                                    </CommandItem>
-                                                ))}
-                                            </CommandGroup>
-                                        </CommandList>
-                                    </Command>
-                                </PopoverContent>
-                            </Popover>
-                        )}
-                    </div>
                     {activePlayerData && activePlayerKey && (
                         <div className="event-selector mt-4">
                             {activePlayerData && (
