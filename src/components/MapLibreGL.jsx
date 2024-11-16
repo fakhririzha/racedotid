@@ -255,11 +255,11 @@ const MapLibreGLMap = ({
                     document.getElementById('finishEl').remove();
                 }
 
-                createMarker(routeCoordinates[0], 'startEl', 'redflag.png');
+                createMarker(routeCoordinates[0], 'startEl', '../redflag.png');
                 createMarker(
                     routeCoordinates[routeCoordinates.length - 1],
                     'finishEl',
-                    'finflag.png'
+                    '../finflag.png'
                 );
             }
         }
@@ -295,7 +295,7 @@ const MapLibreGLMap = ({
                     createMarker(
                         parsedRoutes.features[0].geometry.coordinates[0],
                         `playerElSpecific-${playerData.BIBNo}`,
-                        'greydot.png'
+                        '../greydot.png'
                     );
                     createPopup(
                         parsedRoutes.features[0].geometry.coordinates[0],
@@ -313,7 +313,7 @@ const MapLibreGLMap = ({
                     createMarker(
                         coordinates,
                         `playerElSpecific-${playerData.BIBNo}`,
-                        timeDiff > 30 ? 'reddot.png' : 'greendot.png'
+                        timeDiff > 30 ? '../reddot.png' : '../greendot.png'
                     );
                     createPopup(
                         coordinates,
@@ -494,10 +494,10 @@ const MapLibreGLMap = ({
                 coordinates,
                 'playerEl',
                 participantObject.Longitude === null
-                    ? 'greydot.png'
+                    ? '../greydot.png'
                     : timeDiff > 30
-                      ? 'reddot.png'
-                      : 'greendot.png'
+                      ? '../reddot.png'
+                      : '../greendot.png'
             );
             const playerPopup = document.querySelectorAll(
                 "[class*='playerPopupComplete-']"
