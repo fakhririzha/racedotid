@@ -117,7 +117,7 @@ const Race = () => {
 
     // FUTURE DEVELOPMENT
 
-    console.log('raceData', raceData);
+    // console.log('raceData', raceData);
 
     const fetchEventData = async () => {
         try {
