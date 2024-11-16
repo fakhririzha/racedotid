@@ -24,6 +24,7 @@ const MapLibreGLMap = ({
     setAutoZoom,
     isShowName,
     isShowNumber,
+    isShowLastSeen,
 }) => {
     const { toast } = useToast();
 
@@ -513,6 +514,7 @@ const MapLibreGLMap = ({
             }
             let nameText = '';
             let numberText = '';
+            let lastSeenText = '';
             if (isShowName) {
                 nameText = `<h1>${participantObject.Name}</h1>`;
             } else {
@@ -520,6 +522,11 @@ const MapLibreGLMap = ({
             }
             if (isShowNumber) {
                 numberText = `<h2>#${participantObject.BIBNo}</h2>`;
+            }
+            if (isShowLastSeen) {
+                lastSeenText = `<h2><em>Last Seen: ${dayjs(participantObject.CapturedTime).format('DD-MM-YYYY HH:mm:ss')}</em></h2>`;
+            } else {
+                lastSeenText = '';
             }
 
             if (!isShowName && !isShowNumber) {
@@ -541,7 +548,7 @@ const MapLibreGLMap = ({
                 `<div>
                     ${numberText}
                     ${nameText}
-                    <h2><em>Last Seen: ${dayjs(participantObject.CapturedTime).format('DD-MM-YYYY HH:mm:ss')}</em></h2>
+                    ${lastSeenText}
                     <!-- <h2>Distance Travelled: ${participantObject.Longitude === null ? 0 : distanceTotal.toLocaleString('id-ID', { style: 'decimal', maximumFractionDigits: 3 })}km</h2> -->
                 </div>
                 `,
@@ -582,6 +589,7 @@ const MapLibreGLMap = ({
         autoZoom,
         isShowName,
         isShowNumber,
+        isShowLastSeen,
     ]);
 
     return (
