@@ -396,8 +396,8 @@ const Race = () => {
                             </CardContent>
                         </Card>
                     )}
-                    {activeRaceData && (
-                        <div className="flex flex-col gap-y-2 py-4">
+                    {activePlayerData && activePlayerKey && activePlayerSingle && activePlayerSingleData && <div className="reset-button mt-4">
+                        <div className="flex flex-col gap-y-2 pb-4">
                             <label
                                 htmlFor="terms2"
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
@@ -405,7 +405,7 @@ const Race = () => {
                                 Label Options
                             </label>
                             <div className="flex gap-x-2 py-1">
-                                <Checkbox id="terms3" checked={isShowNumber} onCheckedChange={() => setIsShowNumber(!isShowNumber)} />
+                                <Checkbox id="terms3" disabled={!activePlayerSingle} checked={isShowNumber} onCheckedChange={() => setIsShowNumber(!isShowNumber)} />
                                 <label
                                     htmlFor="terms3"
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
@@ -414,7 +414,7 @@ const Race = () => {
                                 </label>
                             </div>
                             <div className="flex gap-x-2 py-1">
-                                <Checkbox id="terms4" checked={isShowName} onCheckedChange={() => setIsShowName(!isShowName)} />
+                                <Checkbox id="terms4" disabled={!activePlayerSingle} checked={isShowName} onCheckedChange={() => setIsShowName(!isShowName)} />
                                 <label
                                     htmlFor="terms4"
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
@@ -423,17 +423,15 @@ const Race = () => {
                                 </label>
                             </div>
                             <div className="flex gap-x-2 py-1">
-                                <Checkbox id="terms5" checked={isShowLastSeen} onCheckedChange={() => setIsShowLastSeen(!isShowLastSeen)} />
+                                <Checkbox id="terms4" disabled={!activePlayerSingle} checked={isShowLastSeen} onCheckedChange={() => setIsShowLastSeen(!isShowLastSeen)} />
                                 <label
-                                    htmlFor="terms5"
+                                    htmlFor="terms4"
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
                                 >
                                     Tampilkan Last Seen
                                 </label>
+                            </div>
                         </div>
-                        </div>
-                    )}
-                    {activePlayerData && activePlayerKey && activePlayerSingle && activePlayerSingleData && <div className="reset-button mt-4">
                         <label
                             htmlFor="terms1"
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
