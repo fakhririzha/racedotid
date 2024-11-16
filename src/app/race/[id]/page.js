@@ -72,6 +72,7 @@ const Race = () => {
     const [isShowNumber, setIsShowNumber] = React.useState(true);
     const [isShowName, setIsShowName] = React.useState(true);
     const [isShowLastSeen, setIsShowLastSeen] = React.useState(false);
+    const [isShowLegend, setIsShowLegend] = React.useState(false);
 
     const mapRef = React.useRef(null);
     const [mapLibre, setMapLibre] = React.useState(null);
@@ -121,7 +122,7 @@ const Race = () => {
 
     // FUTURE DEVELOPMENT
 
-    console.log('autoZoom', autoZoom);
+    // console.log('autoZoom', autoZoom);
 
     const fetchEventData = async () => {
         try {
@@ -374,6 +375,15 @@ const Race = () => {
                             Lihat Trail Peserta
                         </label>
                     </div>}
+                    {activePlayerData && activePlayerKey && <div className="items-top flex space-x-2 pt-4">
+                        <Checkbox id="terms7" checked={isShowLegend} onCheckedChange={() => setIsShowLegend(!isShowLegend)} />
+                        <label
+                            htmlFor="terms7"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
+                        >
+                            Tampilkan Legend
+                        </label>
+                    </div>}
                     {activePlayerData && activePlayerKey && activePlayerSingle && activePlayerSingleData && (
                         <Card className="w-full my-4">
                             <CardHeader className="max-sm:p-4">
@@ -520,6 +530,7 @@ const Race = () => {
                     isShowName={isShowName}
                     isShowNumber={isShowNumber}
                     isShowLastSeen={isShowLastSeen}
+                    isShowLegend={isShowLegend}
                 />
             </div>
         </main>

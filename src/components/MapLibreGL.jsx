@@ -25,6 +25,7 @@ const MapLibreGLMap = ({
     isShowName,
     isShowNumber,
     isShowLastSeen,
+    isShowLegend,
 }) => {
     const { toast } = useToast();
 
@@ -90,7 +91,7 @@ const MapLibreGLMap = ({
         if (mapRef && eventData && eventData.maseRoute) {
             if (mapLibre._loaded) {
                 const parsedRoutes = JSON.parse(eventData.maseRoute);
-                // const parsedWaypoints = JSON.parse(eventData.maseWaypoints);
+                const parsedWaypoints = JSON.parse(eventData.maseWaypoints);
                 // console.log(parsedWaypoints);
 
                 if (mapLibre.getSource('LineString')) {
@@ -266,10 +267,35 @@ const MapLibreGLMap = ({
                     'finishEl',
                     '../finflag.png'
                 );
+
+                if (isShowLegend) {
+                    parsedWaypoints.features.map((waypoints, index) => {
+                        createMarker(
+                            waypoints.geometry.coordinates,
+                            `waypoints-${index}`,
+                            '../legend.png'
+                        );
+                        createPopup(
+                            waypoints.geometry.coordinates,
+                            `<h1 style="font-size: 8px;">${waypoints.properties.Name}</h1>`,
+                            `waypoints`
+                        );
+                    });
+                } else {
+                    const legendPopup = document.querySelectorAll(
+                        "[class*='waypoints']"
+                    );
+                    const legendMarker =
+                        document.querySelectorAll("[id^='waypoints-']");
+                    if (legendPopup.length > 0) {
+                        legendPopup.forEach((el) => el.remove());
+                        legendMarker.forEach((el) => el.remove());
+                    }
+                }
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [eventData, mapRef, mapLibre, createMarker]);
+    }, [eventData, mapRef, mapLibre, createMarker, isShowLegend]);
 
     React.useEffect(() => {
         if (activePlayerData && activePlayerKey && eventData) {
@@ -437,9 +463,9 @@ const MapLibreGLMap = ({
                     ? parsedRoutes.features[0].geometry.coordinates[0]
                     : [participantObject.Longitude, participantObject.Latitude];
 
-            console.log('parsedRoutes', parsedRoutes);
-            console.log('participantObject', participantObject);
-            console.log('autoZoom', autoZoom);
+            // console.log('parsedRoutes', parsedRoutes);
+            // console.log('participantObject', participantObject);
+            // console.log('autoZoom', autoZoom);
             // console.log(activePlayerSingle);
             // console.log(!showPath && !activePlayerSingle);
 
