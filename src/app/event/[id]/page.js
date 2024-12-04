@@ -97,7 +97,7 @@ const Race = () => {
         const raceJson = await race.json();
         const trail = await fetch(`https://map.race.id/api/data/${activeRaceId}`);
         const trailJson = await trail.json();
-        setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: race.raceName.toLowerCase().include('nusantararun') ? `${race.raceName}` : `${race.raceName} - ${race.maseEventName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
+        setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: race.raceName.toLowerCase().includes('nusantarun') ? `${race.raceName}` : `${race.raceName} - ${race.maseEventName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
         setTrailData(trailJson);
     };
 
