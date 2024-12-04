@@ -96,7 +96,12 @@ const Race = () => {
         const raceJson = await race.json();
         const trail = await fetch(`https://map.race.id/api/data/${params.id}`);
         const trailJson = await trail.json();
-        setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
+        if (raceJson.length > 1) {
+            setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
+        } else if (raceJson.length === 1) {
+            setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
+        }
+        // setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
         setTrailData(trailJson);
     };
 

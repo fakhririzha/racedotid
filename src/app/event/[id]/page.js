@@ -27,7 +27,7 @@ import {
 } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import Image from 'next/image';
 import * as React from 'react';
@@ -97,7 +97,12 @@ const Race = () => {
         const raceJson = await race.json();
         const trail = await fetch(`https://map.race.id/api/data/${activeRaceId}`);
         const trailJson = await trail.json();
-        setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: race.raceName.toLowerCase().includes('nusantarun') ? `${race.raceName}` : `${race.raceName} - ${race.maseEventName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
+        if (raceJson.length > 1) {
+            setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName} - ${race.maseEventName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
+        } else if (raceJson.length === 1) {
+            setRaceData(raceJson.map((race) => ({ value: `${race.maseId}_${race.raceName} - ${race.maseEventName}`, label: `${race.raceName}`, logo: race.raceLogo ? `${race.raceLogo}` : null })));
+        }
+
         setTrailData(trailJson);
     };
 
