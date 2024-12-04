@@ -56,7 +56,7 @@ const Race = () => {
     const [trailData, setTrailData] = React.useState(null);
     const [eventData, setEventData] = React.useState(null);
     const [showPath, setShowPath] = React.useState(false);
-    const [autoZoom, setAutoZoom] = React.useState(true);
+    const [autoZoom, setAutoZoom] = React.useState('Map');
 
     const [activePlayerData, setActivePlayerData] = React.useState(null);
     const [activePlayerKey, setActivePlayerKey] = React.useState(null);
@@ -147,7 +147,6 @@ const Race = () => {
 
             setActivePlayerData(groupDataByRunnerBIBNo(filteredParticipant));
             let filteredNull = [];
-            // console.log(activeEventData);
             filteredParticipant.filter((x) => {
                 if (x.Longitude == null || x.Name == null) {
                     filteredNull.push({
@@ -166,17 +165,12 @@ const Race = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeRaceId]);
 
-    // console.log(activePlayerSingle);
-    // console.log(activePlayerData);
-
     React.useEffect(() => {
         if (activePlayerData && activePlayerSingle) {
             const participantData = activePlayerData[activePlayerSingle.split('_')[0]];
             setActivePlayerSingleData(participantData[0]);
         }
     }, [activePlayerData, activePlayerSingle]);
-
-    // console.log(autoZoom);
 
     return (
         <main className="max-sm:flex-col flex max-sm:h-[100vh]">
@@ -244,9 +238,9 @@ const Race = () => {
                                                                     onSelect={(
                                                                         currentValue
                                                                     ) => {
-                                                                        if (activePlayerSingle !== null && currentValue !== activePlayerSingle) {
-                                                                            setAutoZoom('Reset New Participant');
-                                                                        }
+                                                                        // if (activePlayerSingle !== null && currentValue !== activePlayerSingle) {
+                                                                        //     setAutoZoom('Reset New Participant');
+                                                                        // }
                                                                         setActivePlayerSingle(
                                                                             currentValue ===
                                                                                 activePlayerSingle
@@ -256,6 +250,7 @@ const Race = () => {
                                                                         setOpenActivePlayerSingle(
                                                                             false
                                                                         );
+                                                                        setAutoZoom('Participant');
                                                                     }}
                                                                 >
                                                                     <Check
@@ -280,31 +275,43 @@ const Race = () => {
                             )}
                         </div>
                     )}
-                    {activePlayerData && activePlayerKey && <div className="items-top flex space-x-2 pt-4">
-                        <Checkbox id="terms1" disabled={!activePlayerSingle} checked={showPath} onCheckedChange={() => setShowPath(!showPath)} />
-                        <label
-                            htmlFor="terms1"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
-                        >
-                            Lihat Trail Peserta
-                        </label>
-                    </div>}
-                    {activePlayerData && activePlayerKey && <div className="items-top flex space-x-2 pt-4">
-                        <Checkbox id="terms7" checked={isShowLegend} onCheckedChange={() => setIsShowLegend(!isShowLegend)} />
-                        <label
-                            htmlFor="terms7"
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
-                        >
-                            Tampilkan Legend
-                        </label>
-                    </div>}
+                    {activePlayerData && activePlayerKey && (
+                        <div className="flex flex-col gap-y-2 pt-4">
+                            <label
+                                htmlFor="terms7"
+                                className="text-sm font-medium leading-none ptext-primary"
+                            >
+                                Trail Options
+                            </label>
+                            <div className="flex gap-x-2">
+                                <div className="items-top flex space-x-2 pt-2">
+                                    <Checkbox id="terms1" disabled={!activePlayerSingle} checked={showPath} onCheckedChange={() => setShowPath(!showPath)} />
+                                    <label
+                                        htmlFor="terms1"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
+                                    >
+                                        Trail Peserta
+                                    </label>
+                                </div>
+                                <div className="items-top flex space-x-2 pt-2">
+                                    <Checkbox id="terms7" checked={isShowLegend} onCheckedChange={() => setIsShowLegend(!isShowLegend)} />
+                                    <label
+                                        htmlFor="terms7"
+                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
+                                    >
+                                        Legend
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     {activePlayerData && activePlayerKey && activePlayerSingle && activePlayerSingleData && (
                         <Card className="w-full my-4">
-                            <CardHeader className="max-sm:p-4">
+                            <CardHeader className="p-4">
                                 <CardTitle className="max-sm:text-sm text-lg">{activePlayerSingleData.Name}</CardTitle>
                                 <CardDescription className="max-sm:text-xs text-sm">#{activePlayerSingleData.BIBNo}</CardDescription>
                             </CardHeader>
-                            <CardContent className="max-sm:p-4">
+                            <CardContent className="p-4">
                                 <form>
                                     <div className="grid w-full items-center gap-4">
                                         <div className="flex flex-col space-y-1.5">
@@ -356,15 +363,16 @@ const Race = () => {
                                 htmlFor="terms2"
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
                             >
-                                Label Options
+                                Participant Options
                             </label>
                             <div className="flex gap-x-2 py-1">
+                                <div className="flex gap-x-2 py-1">
                                 <Checkbox id="terms3" disabled={!activePlayerSingle} checked={isShowNumber} onCheckedChange={() => setIsShowNumber(!isShowNumber)} />
                                 <label
                                     htmlFor="terms3"
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
                                 >
-                                    Tampilkan Nomor
+                                        Nomor
                                 </label>
                             </div>
                             <div className="flex gap-x-2 py-1">
@@ -373,7 +381,7 @@ const Race = () => {
                                     htmlFor="terms4"
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
                                 >
-                                    Tampilkan Nama
+                                        Nama
                                 </label>
                             </div>
                             <div className="flex gap-x-2 py-1">
@@ -382,38 +390,74 @@ const Race = () => {
                                     htmlFor="terms4"
                                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
                                 >
-                                    Tampilkan Last Seen
+                                        Last Seen
                                 </label>
+                            </div>
                             </div>
                         </div>
                         <label
                             htmlFor="terms1"
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
                         >
-                            Menu Autofocus
+                            Menu Autofocus on Map
                         </label>
                         <div className="grid grid-cols-2 gap-x-2 mt-2">
                             <Button
                                 variant="outline"
                                 onClick={() => {
-                                    setAutoZoom('Reset')
+                                    setAutoZoom('Reset');
+                                    if (activePlayerData) {
+                                        setAutoZoom('Map');
+                                    }
                                 }}
                                 className="w-full"
-                                disabled={autoZoom === true || autoZoom === 'Reset'}
+                                disabled={autoZoom === 'Map' || autoZoom === 'Participant'}
                             >
                                 Reset/On
                             </Button>
                             <Button
                                 variant="outline"
                                 onClick={() => {
-                                    setAutoZoom(false)
+                                    setAutoZoom(false);
                                 }}
                                 className="w-full"
-                                disabled={autoZoom === false}
+                                disabled={autoZoom === 'Participant' || autoZoom === false}
                             >
                                 Off
                             </Button>
                         </div>
+                        {activePlayerSingle && (
+                            <>
+                                <label
+                                    htmlFor="terms1"
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-primary"
+                                >
+                                    Menu Autofocus on Participant
+                                </label>
+                                <div className="grid grid-cols-2 gap-x-2 mt-2">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            setAutoZoom('Participant');
+                                        }}
+                                        className="w-full"
+                                        disabled={autoZoom === 'Participant' || autoZoom === 'Map' || !activePlayerSingle}
+                                    >
+                                        On
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            setAutoZoom(false);
+                                        }}
+                                        className="w-full"
+                                        disabled={autoZoom === false || autoZoom === 'Map' || autoZoom === false || !activePlayerSingle}
+                                    >
+                                        Off
+                                    </Button>
+                                </div>
+                            </>
+                        )}
                         <div className="grid grid-cols-1 mt-2">
                             <Button
                                 variant="outline"

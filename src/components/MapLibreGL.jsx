@@ -8,7 +8,7 @@ import * as React from 'react';
 
 const MapLibreGLMap = ({
     eventData,
-    // raceData,
+    raceData,
     activeRaceData,
     activeEventData,
     activePlayerData,
@@ -21,7 +21,7 @@ const MapLibreGLMap = ({
     showPath,
     setActivePlayerSingle,
     autoZoom,
-    setAutoZoom,
+    // setAutoZoom,
     isShowName,
     isShowNumber,
     isShowLastSeen,
@@ -88,11 +88,16 @@ const MapLibreGLMap = ({
     }, [mapRef, setMapLibre]);
 
     React.useEffect(() => {
-        if (mapRef && eventData && eventData.maseRoute) {
+        if (
+            mapRef &&
+            eventData &&
+            raceData &&
+            raceData.length > 0 &&
+            eventData.maseRoute
+        ) {
             if (mapLibre._loaded) {
                 const parsedRoutes = JSON.parse(eventData.maseRoute);
                 const parsedWaypoints = JSON.parse(eventData.maseWaypoints);
-                console.log(parsedWaypoints);
 
                 if (mapLibre.getSource('LineString')) {
                     mapLibre.removeLayer('LineString');
@@ -112,7 +117,11 @@ const MapLibreGLMap = ({
                         'line-cap': 'round',
                     },
                     paint: {
-                        'line-color': '#000000',
+                        'line-color': raceData[0].label
+                            .toLowerCase()
+                            .includes('nusantarun')
+                            ? '#cb361b'
+                            : '#000000',
                         'line-width': 8,
                     },
                 });
@@ -203,8 +212,6 @@ const MapLibreGLMap = ({
                 //     },
                 // });
 
-                // console.log(pointStart);
-
                 // const animate = () => {
                 //     pointStart.features[0].geometry.coordinates =
                 //         parsedRoutes.features[0].geometry.coordinates[counter];
@@ -221,8 +228,6 @@ const MapLibreGLMap = ({
                 //             ]
                 //         )
                 //     );
-
-                //     console.log('run');
 
                 //     mapLibre.getSource('point').setData(pointStart);
 
@@ -254,7 +259,9 @@ const MapLibreGLMap = ({
                     )
                 );
 
-                mapLibre.fitBounds(bounds, { padding: 20 });
+                if (autoZoom === 'Map') {
+                    mapLibre.fitBounds(bounds, { padding: 20 });
+                }
 
                 if (document.getElementById('startEl')) {
                     document.getElementById('startEl').remove();
@@ -304,7 +311,7 @@ const MapLibreGLMap = ({
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [eventData, mapRef, mapLibre, createMarker, isShowLegend]);
+    }, [eventData, raceData, mapRef, mapLibre, createMarker, isShowLegend]);
 
     React.useEffect(() => {
         if (activePlayerData && activePlayerKey && eventData) {
@@ -331,7 +338,6 @@ const MapLibreGLMap = ({
                 const coordinates = [playerData.Longitude, playerData.Latitude];
 
                 if (coordinates[0] === null || coordinates[1] === null) {
-                    // console.log('null', playerData.BIBNo);
                     createMarker(
                         parsedRoutes.features[0].geometry.coordinates[0],
                         `playerElSpecific-${playerData.BIBNo}`,
@@ -346,9 +352,6 @@ const MapLibreGLMap = ({
                     let capturedTime = dayjs(playerData.CapturedTime);
                     let nowTime = dayjs(Date.now());
                     const timeDiff = nowTime.diff(capturedTime, 'minutes');
-
-                    // if (timeDiff > 30)
-                    //     console.log('inactive', playerData.BIBNo);
 
                     createMarker(
                         coordinates,
@@ -434,8 +437,6 @@ const MapLibreGLMap = ({
                     type: 'FeatureCollection',
                 };
 
-                // console.log(participantRoute);
-
                 if (mapLibre.getSource('ParticipantRoute')) {
                     mapLibre.removeLayer('ParticipantRoute');
                     mapLibre.removeSource('ParticipantRoute');
@@ -472,17 +473,7 @@ const MapLibreGLMap = ({
                     ? parsedRoutes.features[0].geometry.coordinates[0]
                     : [participantObject.Longitude, participantObject.Latitude];
 
-            // console.log('parsedRoutes', parsedRoutes);
-            // console.log('participantObject', participantObject);
-            // console.log('autoZoom', autoZoom);
-            // console.log(activePlayerSingle);
-            // console.log(!showPath && !activePlayerSingle);
-
-            if (
-                autoZoom === true ||
-                autoZoom === 'Reset' ||
-                autoZoom === 'Reset New Participant'
-            ) {
+            if (autoZoom === 'Participant') {
                 mapLibre.fitBounds(
                     new maplibregl.LngLatBounds(coordinates, coordinates),
                     { padding: 20 }
@@ -504,9 +495,6 @@ const MapLibreGLMap = ({
                 turf.point(coordinates),
                 featureCollectionRoutes
             );
-            // console.log('pointRoutes', pointRoutes);
-            // console.log('featureCollectionRoutes', featureCollectionRoutes);
-            // console.log('nearest', nearest);
 
             const nearestPointFromParticipant = lineJustCoordinates.findIndex(
                 (innerArr) => {
@@ -526,11 +514,6 @@ const MapLibreGLMap = ({
                     distanceTotal += turf.distance(current, next);
                 }
             }
-
-            // console.log('distanceTotal', distanceTotal);
-            // console.log('participantObject', participantObject);
-
-            // if (timeDiff > 30) console.log(participantObject.BIBNo);
 
             createMarker(
                 coordinates,
@@ -589,12 +572,12 @@ const MapLibreGLMap = ({
                 `,
                 `playerPopupComplete-${participantObject.BIBNo}`
             );
-            if (
-                autoZoom !== 'Reset' &&
-                (autoZoom === true || autoZoom === 'Reset New Participant')
-            )
-                setAutoZoom(false);
-        } else if (autoZoom === 'Back to Center') {
+            // if (
+            //     autoZoom !== 'Reset' &&
+            //     (autoZoom === true || autoZoom === 'Reset New Participant')
+            // )
+            //     setAutoZoom(false);
+        } else if (eventData && autoZoom === 'Map') {
             const parsedRoutes = JSON.parse(eventData.maseRoute);
 
             const routeCoordinates =

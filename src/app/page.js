@@ -139,18 +139,15 @@ const Home = () => {
                 `https://map.race.id/api/participantByRace/${parseInt(raceId)}`
             );
             const participantJson = await participant.json();
-            // console.log(participantJson);
 
             const filteredParticipant = participantJson.filter((x) => {
                 if (x.eventId == eventId && x.Name != null) {
                     return x;
                 }
             });
-            // console.log(filteredParticipant);
 
             setActivePlayerData(groupDataByRunnerBIBNo(filteredParticipant));
             let filteredNull = [];
-            // console.log(activeEventData);
             filteredParticipant.filter((x) => {
                 if (x.Longitude == null || x.Name == null) {
                     filteredNull.push({
@@ -159,7 +156,6 @@ const Home = () => {
                     })
                 }
             });
-            // console.log(filteredNull);
             setActivePlayerKey(
                 Object.keys(groupDataByRunnerBIBNo(filteredParticipant))
             );
@@ -169,17 +165,12 @@ const Home = () => {
         }
     }, [activeEventData, raceData]);
 
-    // console.log(activePlayerSingle);
-    // console.log(activePlayerData);
-
     React.useEffect(() => {
         if (activePlayerData && activePlayerSingle) {
             const participantData = activePlayerData[activePlayerSingle.split('_')[0]];
             setActivePlayerSingleData(participantData[0]);
         }
     }, [activePlayerData, activePlayerSingle]);
-
-    // console.log(autoZoom);
 
     return (
         <main className="max-sm:flex-col flex max-sm:h-[100vh]">
