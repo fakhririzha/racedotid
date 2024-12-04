@@ -92,7 +92,7 @@ const MapLibreGLMap = ({
             if (mapLibre._loaded) {
                 const parsedRoutes = JSON.parse(eventData.maseRoute);
                 const parsedWaypoints = JSON.parse(eventData.maseWaypoints);
-                // console.log(parsedWaypoints);
+                console.log(parsedWaypoints);
 
                 if (mapLibre.getSource('LineString')) {
                     mapLibre.removeLayer('LineString');
@@ -269,6 +269,15 @@ const MapLibreGLMap = ({
                 );
 
                 if (isShowLegend) {
+                    const legendPopup = document.querySelectorAll(
+                        "[class*='waypoints']"
+                    );
+                    const legendMarker =
+                        document.querySelectorAll("[id^='waypoints-']");
+                    if (legendPopup.length > 0) {
+                        legendPopup.forEach((el) => el.remove());
+                        legendMarker.forEach((el) => el.remove());
+                    }
                     parsedWaypoints.features.map((waypoints, index) => {
                         createMarker(
                             waypoints.geometry.coordinates,

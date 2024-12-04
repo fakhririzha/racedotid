@@ -92,6 +92,10 @@ div.maplibregl-popup-content {
     padding: 4px 8px;
     font-weight: bold;
 }
+.waypoints .maplibregl-popup-content {
+    padding: 0px 4px;
+    font-weight: bold;
+}
 div.maplibregl-popup-content:hover {
     cursor: pointer;
 }
