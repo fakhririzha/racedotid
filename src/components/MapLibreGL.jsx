@@ -1,10 +1,13 @@
 /* eslint-disable react/prop-types */
 import { useToast } from '@/components/hooks/use-toast';
 import * as turf from '@turf/turf';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import * as React from 'react';
+
+dayjs.extend(isSameOrAfter);
 
 const MapLibreGLMap = ({
     eventData,
@@ -54,8 +57,6 @@ const MapLibreGLMap = ({
         },
         [mapLibre]
     );
-
-    // const [counter, setCounter] = React.useState(0);
 
     React.useEffect(() => {
         const OSMStyles = {
@@ -394,10 +395,11 @@ const MapLibreGLMap = ({
                 return participant['BIBNo'] == idx;
             });
 
+            const pCapturedTime = filteredTrailData[0]['CapturedTime'];
             const pLongitude = filteredTrailData[0]['Longitude'];
             const pLatitude = filteredTrailData[0]['Latitude'];
 
-            if (!pLongitude || !pLatitude) {
+            if (!pLongitude || !pLatitude || !pCapturedTime) {
                 toast({
                     // variant: 'destructive',
                     title: 'Koordinat peserta tidak ditemukan.',
@@ -408,15 +410,21 @@ const MapLibreGLMap = ({
                 return;
             }
 
+            const participantCapturedTime = pCapturedTime.split(',');
             const participantLongitude = pLongitude.split(',');
             const participantLatitude = pLatitude.split(',');
 
             const participantCoordinates = [];
             for (let i = 0; i < participantLongitude.length; i++) {
-                participantCoordinates.push([
-                    parseFloat(participantLongitude[i]),
-                    parseFloat(participantLatitude[i]),
-                ]);
+                const isCapturedTimeAfterRaceStart = dayjs(
+                    participantCapturedTime[i]
+                ).isSameOrAfter(eventData.maseStartTime);
+                if (isCapturedTimeAfterRaceStart) {
+                    participantCoordinates.push([
+                        parseFloat(participantLongitude[i]),
+                        parseFloat(participantLatitude[i]),
+                    ]);
+                }
             }
 
             if (showPath) {
