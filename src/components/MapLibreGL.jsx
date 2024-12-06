@@ -484,7 +484,7 @@ const MapLibreGLMap = ({
             if (autoZoom === 'Participant') {
                 mapLibre.fitBounds(
                     new maplibregl.LngLatBounds(coordinates, coordinates),
-                    { padding: 20 }
+                    { padding: 20, zoom: 14 }
                 );
             }
 
