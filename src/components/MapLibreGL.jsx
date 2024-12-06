@@ -24,7 +24,7 @@ const MapLibreGLMap = ({
     showPath,
     setActivePlayerSingle,
     autoZoom,
-    // setAutoZoom,
+    setAutoZoom,
     isShowName,
     isShowNumber,
     isShowLastSeen,
@@ -262,6 +262,7 @@ const MapLibreGLMap = ({
 
                 if (autoZoom === 'Map') {
                     mapLibre.fitBounds(bounds, { padding: 20 });
+                    setAutoZoom(false);
                 }
 
                 if (document.getElementById('startEl')) {
@@ -486,6 +487,7 @@ const MapLibreGLMap = ({
                     new maplibregl.LngLatBounds(coordinates, coordinates),
                     { padding: 20, zoom: 14 }
                 );
+                setAutoZoom(false);
             }
 
             // mapLibre.setZoom(18);
@@ -599,6 +601,7 @@ const MapLibreGLMap = ({
             );
 
             mapLibre.fitBounds(bounds, { padding: 20 });
+            setAutoZoom(false);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
